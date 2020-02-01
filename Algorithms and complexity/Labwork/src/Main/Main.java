@@ -1,5 +1,6 @@
+package Main;
+
 import PerfectHashing.PerfectHashMap;
-import javafx.util.Pair;
 
 import java.security.SecureRandom;
 import java.util.*;
@@ -14,7 +15,7 @@ public class Main {
     private static SecureRandom random = new SecureRandom();
 
     public static void main(String[] args) {
-        Set<Pair<String, List<String>>> set = new HashSet<>();
+        Set<Schedule> set = new HashSet<>();
 
         String searchKey = null;
         String answer = null;
@@ -25,7 +26,9 @@ public class Main {
             List<String> value = new ArrayList<>();
             value.add(generateRandomString(4));
 
-            set.add(new Pair<>(key, value));
+            Schedule schedule = new Schedule(key);
+            schedule.setLessons(value);
+            set.add(schedule);
 
             if (i == 11) {
                 searchKey = key;
@@ -33,15 +36,11 @@ public class Main {
             }
         }
 
-        List<Pair<String, List<String>>> list = new ArrayList<>();
+        List<Schedule> list = new ArrayList<>(set);
 
-        for (Pair<String, List<String>> pair : set) {
-            list.add(pair);
-        }
-
-//        List<Schedule> buffer = GettingSchedule.getSchedule();
+//        List<Main.Schedule> buffer = Main.GettingSchedule.getSchedule();
 //
-//        for (Schedule schedule : buffer) {
+//        for (Main.Schedule schedule : buffer) {
 //            list.add(new Pair<>(schedule.getDay(), schedule.getLessons()));
 //        }
 
@@ -52,7 +51,7 @@ public class Main {
 
         assert searchKey != null;
         System.out.println(answer);
-        System.out.println(perfectHashMap.get(searchKey).getValue());
+        System.out.println(perfectHashMap.get(searchKey).getLessons());
     }
 
     public static String generateRandomString(int length) {

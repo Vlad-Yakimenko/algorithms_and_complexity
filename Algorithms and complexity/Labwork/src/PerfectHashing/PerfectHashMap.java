@@ -1,6 +1,6 @@
 package PerfectHashing;
 
-import javafx.util.Pair;
+import Main.Schedule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,18 +9,20 @@ import java.util.List;
 public class PerfectHashMap {
 
     private SecondHashTable[] perfectHashMap;
-    private List<Pair<Integer, Pair<String, ?>>>  hashedKeys;
+    private List<Schedule> staticList;
     private int a, b, p, m;
 
-    public PerfectHashMap(List<Pair<String, List<String>>> staticList, String searchKey) {
-        this.hashedKeys = encryptKeys(staticList);
+    public PerfectHashMap(List<Schedule> staticList, String searchKey) {
+        this.staticList = staticList;
+
+        searchingP(staticList);
         this.a = ValuesGenerator.generateA(p);
         this.b = ValuesGenerator.generateB(p);
 
-        double squareRootOfN = Math.sqrt(hashedKeys.size());
+        double squareRootOfN = Math.sqrt(staticList.size());
         this.m = (int) (squareRootOfN * Math.sqrt(squareRootOfN));
 
-        List<List<Pair<Integer, Pair<String, ?>>>> temp = new ArrayList<>();
+        List<List<Schedule>> temp = new ArrayList<>();
         for (int i = 0; i < m; i++) {
             temp.add(new ArrayList<>());
         }
@@ -29,41 +31,33 @@ public class PerfectHashMap {
         creatingSecondFloor(temp, searchKey);
     }
 
-    private List<Pair<Integer, Pair<String, ?>>> encryptKeys(List<Pair<String, List<String>>> list) {
-        List<Pair<Integer, Pair<String, ?>>> buffer = new ArrayList<>();
+    private void searchingP(List<Schedule> list) {
         int maxHash = 0;
 
-        for (Pair<String, ?> pair : list) {
-            int hash = Math.abs(pair.getKey().hashCode());
-
-            if (hash > maxHash) maxHash = hash;
-
-            buffer.add(new Pair<>(hash, pair));
+        for (Schedule schedule : list) {
+            if (schedule.getDayHash() > maxHash) maxHash = schedule.getDayHash();
         }
 
         this.p = ValuesGenerator.generateP(maxHash);
-
-        return buffer;
     }
 
-    private void fillingTempHashTable(List<List<Pair<Integer, Pair<String, ?>>>> temp, String searchKey) {
-        for (Pair<Integer, Pair<String, ?>> pair : hashedKeys) {
-            int index = ValuesGenerator.generateUniversalHash(pair.getKey(), a, b, p, m);
+    private void fillingTempHashTable(List<List<Schedule>> temp, String searchKey) {
+        for (Schedule schedule : staticList) {
+            int index = ValuesGenerator.generateUniversalHash(schedule.getDayHash(), a, b, p, m);
 
-            if (pair.getValue().getKey().equals(searchKey)) {
+            if (schedule.getDay().equals(searchKey)) {
                 System.out.println("First floor level: " + index);
             }
 
-            temp.get(index).add(pair);
+            temp.get(index).add(schedule);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void creatingSecondFloor(List<List<Pair<Integer, Pair<String, ?>>>> temp, String searchKey) {
+    private void creatingSecondFloor(List<List<Schedule>> temp, String searchKey) {
         perfectHashMap = new SecondHashTable[m];
         int i = 0;
 
-        for (List<Pair<Integer, Pair<String, ?>>> chain : temp) {
+        for (List<Schedule> chain : temp) {
             if (chain.size() > 0) {
                 createSubHashMap(chain, i, searchKey);
             } else {
@@ -74,8 +68,7 @@ public class PerfectHashMap {
         }
     }
 
-    @SuppressWarnings("unchecked")
-    private void createSubHashMap(List<Pair<Integer, Pair<String, ?>>> chain, int i, String searchKey) {
+    private void createSubHashMap(List<Schedule> chain, int i, String searchKey) {
         int subLevelSize = chain.size() * chain.size();
         boolean isCollision;
 
@@ -86,10 +79,10 @@ public class PerfectHashMap {
             perfectHashMap[i] = new SecondHashTable(subLevelA, subLevelB, subLevelSize);
             isCollision = false;
 
-            for (Pair<Integer, Pair<String, ?>> pair : chain) {
-                int index = ValuesGenerator.generateUniversalHash(pair.getKey(), subLevelA, subLevelB, p, subLevelSize);
+            for (Schedule schedule : chain) {
+                int index = ValuesGenerator.generateUniversalHash(schedule.getDayHash(), subLevelA, subLevelB, p, subLevelSize);
 
-                if (pair.getValue().getKey().equals(searchKey)) {
+                if (schedule.getDay().equals(searchKey)) {
                     System.out.println("Second floor index: " + (index + 3));
                 }
 
@@ -97,14 +90,14 @@ public class PerfectHashMap {
                     isCollision = true;
                     break;
                 } else {
-                    perfectHashMap[i].setByIndex(index, pair);
+                    perfectHashMap[i].setByIndex(index, schedule);
                 }
             }
         } while (isCollision);
     }
 
     public void getHashTableSize() {
-        System.out.println("Main HashMap size: " + perfectHashMap.length);
+        System.out.println("Main.Main HashMap size: " + perfectHashMap.length);
 
         int i = 0;
         for (SecondHashTable secondHashTable : perfectHashMap) {
@@ -122,7 +115,7 @@ public class PerfectHashMap {
         System.out.println(Arrays.deepToString(perfectHashMap));
     }
 
-    public Pair<?, ?> get(String key) {
+    public Schedule get(String key) {
         int rowIndex = ValuesGenerator.generateUniversalHash(Math.abs(key.hashCode()), a, b, p, m);
 
         int subLevelSize = perfectHashMap[rowIndex].getM();
@@ -133,6 +126,6 @@ public class PerfectHashMap {
         System.out.println("Row index: " + rowIndex);
         System.out.println("Column index: " + (columnIndex + 3));
 
-        return (Pair<?, ?>) (perfectHashMap[rowIndex].get(columnIndex).getValue());
+        return perfectHashMap[rowIndex].get(columnIndex);
     }
 }

@@ -1,25 +1,24 @@
 package PerfectHashing;
 
-import javafx.util.Pair;
+import Main.Schedule;
 
 public class SecondHashTable {
 
     private int a, b, m;
-    private Pair<Integer, Pair<String, ?>>[] hashTable;
+    private Schedule[] hashTable;
 
-    @SuppressWarnings("unchecked")
     SecondHashTable(int a, int b, int m) {
         this.a = a;
         this.b = b;
         this.m = m;
-        hashTable = new Pair[m];
+        hashTable = new Schedule[m];
     }
 
-    public Pair<?, ?> get(int index) {
+    public Schedule get(int index) {
         return hashTable[index];
     }
 
-    public void setByIndex(int index, Pair<Integer, Pair<String, ?>> value) {
+    public void setByIndex(int index, Schedule value) {
         hashTable[index] = value;
     }
 
