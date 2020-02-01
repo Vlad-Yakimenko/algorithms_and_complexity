@@ -11,20 +11,20 @@ public class Schedule {
         lessons = new ArrayList<>();
     }
 
-    public void addLesson(String lesson) {
-        lessons.add(lesson);
-    }
-
-    public void  setLessons(List<String> lessons) {
-        this.lessons = lessons;
-    }
-
     public String getDay() {
         return day;
     }
 
     public List<String> getLessons() {
         return lessons;
+    }
+
+    public void  setLessons(List<String> lessons) {
+        this.lessons = lessons;
+    }
+
+    public void addLesson(String lesson) {
+        lessons.add(lesson);
     }
 
     public void clearSchedule() {

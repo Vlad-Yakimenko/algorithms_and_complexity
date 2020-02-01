@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PerfectHashMap {
 
-    private Pair<Integer, ?>[][] perfectHashMap;
+    private SecondHashTable[] perfectHashMap;
     private List<Pair<Integer, Pair<String, ?>>>  hashedKeys;
     private int a, b, p, m;
 
@@ -60,7 +60,7 @@ public class PerfectHashMap {
 
     @SuppressWarnings("unchecked")
     private void creatingSecondFloor(List<List<Pair<Integer, Pair<String, ?>>>> temp, String searchKey) {
-        perfectHashMap = new Pair[m][1];
+        perfectHashMap = new SecondHashTable[m];
         int i = 0;
 
         for (List<Pair<Integer, Pair<String, ?>>> chain : temp) {
@@ -80,14 +80,11 @@ public class PerfectHashMap {
         boolean isCollision;
 
         do {
-            perfectHashMap[i] = new Pair[subLevelSize + 3];
-            perfectHashMap[i][0] = new Pair<>(subLevelSize, null);
-            perfectHashMap[i][1] = new Pair<>(ValuesGenerator.generateA(p), null);
-            perfectHashMap[i][2] = new Pair<>(ValuesGenerator.generateB(p), null);
-            isCollision = false;
+            int subLevelA = ValuesGenerator.generateA(p);
+            int subLevelB = ValuesGenerator.generateB(p);
 
-            int subLevelA = perfectHashMap[i][1].getKey();
-            int subLevelB = perfectHashMap[i][2].getKey();
+            perfectHashMap[i] = new SecondHashTable(subLevelA, subLevelB, subLevelSize);
+            isCollision = false;
 
             for (Pair<Integer, Pair<String, ?>> pair : chain) {
                 int index = ValuesGenerator.generateUniversalHash(pair.getKey(), subLevelA, subLevelB, p, subLevelSize);
@@ -96,11 +93,11 @@ public class PerfectHashMap {
                     System.out.println("Second floor index: " + (index + 3));
                 }
 
-                if (perfectHashMap[i][index + 3] != null) {
+                if (perfectHashMap[i].isSomethingByIndex(index)) {
                     isCollision = true;
                     break;
                 } else {
-                    perfectHashMap[i][index + 3] = pair;
+                    perfectHashMap[i].setByIndex(index, pair);
                 }
             }
         } while (isCollision);
@@ -110,9 +107,9 @@ public class PerfectHashMap {
         System.out.println("Main HashMap size: " + perfectHashMap.length);
 
         int i = 0;
-        for (Pair<Integer, ?>[] pairs : perfectHashMap) {
-            if (pairs != null) {
-                System.out.println(i + " chain size: " + pairs.length);
+        for (SecondHashTable secondHashTable : perfectHashMap) {
+            if (secondHashTable != null) {
+                System.out.println(i + " chain size: " + secondHashTable.getM());
             } else {
                 System.out.println(i + " chain size: 0");
             }
@@ -128,14 +125,14 @@ public class PerfectHashMap {
     public Pair<?, ?> get(String key) {
         int rowIndex = ValuesGenerator.generateUniversalHash(Math.abs(key.hashCode()), a, b, p, m);
 
-        Integer subLevelSize = perfectHashMap[rowIndex][0].getKey();
-        Integer subLevelA = perfectHashMap[rowIndex][1].getKey();
-        Integer subLevelB = perfectHashMap[rowIndex][2].getKey();
+        int subLevelSize = perfectHashMap[rowIndex].getM();
+        int subLevelA = perfectHashMap[rowIndex].getA();
+        int subLevelB = perfectHashMap[rowIndex].getB();
         int columnIndex = ValuesGenerator.generateUniversalHash(Math.abs(key.hashCode()), subLevelA, subLevelB, p, subLevelSize);
 
         System.out.println("Row index: " + rowIndex);
         System.out.println("Column index: " + (columnIndex + 3));
 
-        return (Pair<?, ?>) (perfectHashMap[rowIndex][columnIndex + 3].getValue());
+        return (Pair<?, ?>) (perfectHashMap[rowIndex].get(columnIndex).getValue());
     }
 }
