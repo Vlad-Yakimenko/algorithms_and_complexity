@@ -66,24 +66,6 @@ public class Main {
 //    }
 
     public static void main(String[] args) {
-//        AbstractTree<Integer, String>.Node root;
-//
-//        root = abstractTree.new Node(7, null);
-//        root.right = abstractTree.new Node(11, null);
-//        root.right.parent = root;, null
-//        root.right.left = abstractTree.new Node(9, null);
-//        root.right.left.parent = root.right;
-//        root.right.right = abstractTree.new Node(18, null);
-//        root.right.right.parent = root.right;
-//        root.right.right.left = abstractTree.new Node(14, null);
-//        root.right.right.left.parent = root.right.right;
-//        root.right.right.right = abstractTree.new Node(19, null);
-//        root.right.right.right.parent = root.right.right;
-//        abstractTree.leftRotate(root.right);
-//        abstractTree.rightRotate(root.right);
-//
-//        print(root, 0);
-
         RedBlackTree<Integer, String> redBlackTree = new RedBlackTree<>();
         redBlackTree.insert(87, null);
         redBlackTree.insert(3, null);
@@ -108,5 +90,12 @@ public class Main {
         redBlackTree.print();
 
         System.out.println(redBlackTree.search(56));
+
+//        redBlackTree.insert(11, null);
+//        redBlackTree.insert(7, null);
+//        redBlackTree.insert(13, null);
+//        redBlackTree.insert(6, null);
+//        redBlackTree.insert(4, null);
+//        redBlackTree.print();
     }
 }

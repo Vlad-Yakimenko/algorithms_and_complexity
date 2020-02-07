@@ -2,8 +2,39 @@ package Trees;
 
 public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
 
+    private RBNode root;
+    protected final RBNode NIL;
+
+    protected class RBNode extends Node {
+        private boolean color;
+        public RBNode parent, left, right;
+
+        public RBNode(K key, V value) {
+            super(key, value);
+            this.color = true;
+            parent = left = right = NIL;
+        }
+
+        public boolean getColor() {
+            return this.color;
+        }
+
+        public void setColorBlack() {
+            this.color = true;
+        }
+
+        public void setColorRed() {
+            this.color = false;
+        }
+    }
+
+    public RedBlackTree() {
+        this.NIL = new RBNode(null, null);
+        this.root = NIL;
+    }
+
     public V search(K value) {
-        Node temp = this.root;
+        RBNode temp = this.root;
 
         while (temp != this.NIL) {
             if (temp.getKey().equals(value)) {
@@ -18,8 +49,8 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         return null;
     }
 
-    private Node searchNode(K value) {
-        Node temp = this.root;
+    private RBNode searchNode(K value) {
+        RBNode temp = this.root;
 
         while (temp != this.NIL) {
             if (temp.getKey().equals(value)) {
@@ -36,9 +67,9 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
 
     @SuppressWarnings("SuspiciousNameCombination")
     public void insert(K key, V value) {
-        Node insertedNode = new Node(key, value);
+        RBNode insertedNode = new RBNode(key, value);
 
-        Node x = this.root, y = this.NIL;
+        RBNode x = this.root, y = this.NIL;
 
         while (x != this.NIL) {
             y = x;
@@ -68,10 +99,12 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
     }
 
     @SuppressWarnings("SuspiciousNameCombination")
-    private void insertFixup(Node currentNode) {
+    private void insertFixup(RBNode currentNode) {
         while (!currentNode.parent.getColor()) {
+            RBNode y;
+
             if (currentNode.parent == currentNode.parent.parent.left) {
-                Node y = currentNode.parent.parent.right;
+                y = currentNode.parent.parent.right;
 
                 if (!y.getColor()) {
                     currentNode.parent.setColorBlack();
@@ -89,7 +122,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
                     rightRotate(currentNode.parent.parent);
                 }
             } else {
-                Node y = currentNode.parent.parent.left;
+                y = currentNode.parent.parent.left;
 
                 if (!y.getColor()) {
                     currentNode.parent.setColorBlack();
@@ -112,8 +145,8 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         this.root.setColorBlack();
     }
 
-    public void delete(K value) {
-        Node deletedNode = searchNode(value), x, y;
+    public void delete(K key) {
+        RBNode deletedNode = searchNode(key), x, y;
         boolean yOriginalColor;
 
         if (deletedNode == null) {
@@ -158,8 +191,8 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         }
     }
 
-    private void deleteFixup(Node value) {
-        Node temp;
+    private void deleteFixup(RBNode value) {
+        RBNode temp;
 
         while (value != this.root && value.getColor()) {
             if (value == value.parent.left) {
@@ -232,7 +265,53 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         value.setColorBlack();
     }
 
-    private void RBTreeTransplant(Node first, Node second) {
+    @SuppressWarnings("SuspiciousNameCombination")
+    protected void leftRotate(RBNode x) {
+        RBNode y = x.right;
+        x.right = y.left;
+
+        if (y.left != this.NIL) {
+            y.left.parent = x;
+        }
+
+        y.parent = x.parent;
+
+        if (x.parent == this.NIL) {
+            this.root = y;
+        } else if (x == x.parent.left) {
+            x.parent.left = y;
+        } else {
+            x.parent.right = y;
+        }
+
+        y.left = x;
+        x.parent = y;
+    }
+
+    @SuppressWarnings("SuspiciousNameCombination")
+    protected void rightRotate(RBNode y) {
+        RBNode x = y.left;
+        y.left = x.right;
+
+        if (x.right != this.NIL) {
+            x.right.parent = y;
+        }
+
+        x.parent = y.parent;
+
+        if (y.parent == this.NIL) {
+            this.root = x;
+        } else if (y == y.parent.right) {
+            y.parent.right = x;
+        } else {
+            y.parent.left = x;
+        }
+
+        x.right = y;
+        y.parent = x;
+    }
+
+    private void RBTreeTransplant(RBNode first, RBNode second) {
         if (first.parent == this.NIL) {
             this.root = second;
         } else if (first == first.parent.left) {
@@ -242,5 +321,32 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         }
 
         second.parent = first.parent;
+    }
+
+    private RBNode treeMinimum(RBNode x) {
+        while (x.left != this.NIL) {
+            x = x.left;
+        }
+
+        return x;
+    }
+
+    @Override
+    public void print() {
+        RBNode temp = this.root;
+        redBlackTreePrintMethod(temp, 0);
+    }
+
+    private void redBlackTreePrintMethod(RedBlackTree<? extends Comparable<?>, ?>.RBNode node, int n) {
+        if (node != null) {
+            redBlackTreePrintMethod(node.right, n + 10);
+
+            for (int i = 0; i < n; i++) {
+                System.out.print(" ");
+            }
+            System.out.println("" + node.getKey() + "=" + node.getColor());
+
+            redBlackTreePrintMethod(node.left, n + 10);
+        }
     }
 }
