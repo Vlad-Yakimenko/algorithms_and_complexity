@@ -1,6 +1,10 @@
 package Main;
 
+import Trees.AbstractTree;
+import Trees.OrderStatisticTree;
 import Trees.RedBlackTree;
+
+import java.util.Random;
 
 public class Main {
 
@@ -35,11 +39,11 @@ public class Main {
 //
 //        List<Schedule> list = new ArrayList<>(set);
 //
-////        List<Main.Schedule> buffer = Main.GettingSchedule.getSchedule();
-////
-////        for (Main.Schedule schedule : buffer) {
-////            list.add(new Pair<>(schedule.getDay(), schedule.getLessons()));
-////        }
+//        List<Main.Schedule> buffer = Main.GettingSchedule.getSchedule();
+//
+//        for (Main.Schedule schedule : buffer) {
+//            list.add(new Pair<>(schedule.getDay(), schedule.getLessons()));
+//        }
 //
 //        PerfectHashMap perfectHashMap = new PerfectHashMap(list, searchKey);
 //
@@ -65,37 +69,67 @@ public class Main {
 //        return stringBuilder.toString();
 //    }
 
-    public static void main(String[] args) {
-        RedBlackTree<Integer, String> redBlackTree = new RedBlackTree<>();
-        redBlackTree.insert(87, null);
-        redBlackTree.insert(3, null);
-        redBlackTree.insert(67, null);
-        redBlackTree.insert(11, null);
-        redBlackTree.insert(56, "Hello");
-        redBlackTree.insert(12, null);
-        redBlackTree.insert(7, null);
-        redBlackTree.insert(5, "Lol");
-        redBlackTree.insert(1, null);
-        redBlackTree.insert(77, null);
-        redBlackTree.insert(9, null);
-        redBlackTree.insert(45, null);
-
-        redBlackTree.print();
-        System.out.println("______________________");
-
-        redBlackTree.delete(87);
-        redBlackTree.delete(9);
-        redBlackTree.delete(5);
-        redBlackTree.delete(45);
-        redBlackTree.print();
-
-        System.out.println(redBlackTree.search(56));
-
+//    public static void main(String[] args) {
+//        RedBlackTree<Integer, String> redBlackTree = new RedBlackTree<>();
+//        redBlackTree.insert(87, null);
+//        redBlackTree.insert(3, null);
+//        redBlackTree.insert(67, null);
+//        redBlackTree.insert(11, null);
+//        redBlackTree.insert(56, "Hello");
+//        redBlackTree.insert(12, null);
+//        redBlackTree.insert(7, null);
+//        redBlackTree.insert(5, "Lol");
+//        redBlackTree.insert(1, null);
+//        redBlackTree.insert(77, null);
+//        redBlackTree.insert(9, null);
+//        redBlackTree.insert(45, null);
+//
+//        redBlackTree.print();
+//        System.out.println("______________________");
+//
+//        redBlackTree.delete(87);
+//        redBlackTree.delete(9);
+//        redBlackTree.delete(5);
+//        redBlackTree.delete(45);
+//        redBlackTree.print();
+//
+//        System.out.println(redBlackTree.search(56));
+//
 //        redBlackTree.insert(11, null);
 //        redBlackTree.insert(7, null);
 //        redBlackTree.insert(13, null);
 //        redBlackTree.insert(6, null);
 //        redBlackTree.insert(4, null);
 //        redBlackTree.print();
+//    }
+
+    public static void main(String[] args) {
+        OrderStatisticTree<Integer, String> orderStatisticTree = new OrderStatisticTree<>();
+        orderStatisticTree.insert(87, null);
+        orderStatisticTree.insert(3, null);
+        orderStatisticTree.insert(67, null);
+        orderStatisticTree.insert(11, null);
+        orderStatisticTree.insert(56, "Hello");
+        orderStatisticTree.insert(12, "Gotcha!");
+        orderStatisticTree.insert(7, null);
+        orderStatisticTree.insert(5, "Lol");
+        orderStatisticTree.insert(1, null);
+        orderStatisticTree.insert(77, null);
+        orderStatisticTree.insert(9, null);
+        orderStatisticTree.insert(45, null);
+
+        orderStatisticTree.print();
+        System.out.println("______________________");
+
+        orderStatisticTree.delete(87);
+        orderStatisticTree.delete(9);
+        orderStatisticTree.delete(5);
+        orderStatisticTree.delete(45);
+        orderStatisticTree.print();
+
+        System.out.println("______________________");
+
+        System.out.println(orderStatisticTree.selectOST(orderStatisticTree.getRank(3)));
+        System.out.println(orderStatisticTree.search(56));
     }
 }

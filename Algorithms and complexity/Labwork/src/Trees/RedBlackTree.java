@@ -3,11 +3,11 @@ package Trees;
 public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
 
     private RBNode root;
-    protected final RBNode NIL;
+    private final RBNode NIL;
 
     protected class RBNode extends Node {
         private boolean color;
-        public RBNode parent, left, right;
+        private RBNode parent, left, right;
 
         public RBNode(K key, V value) {
             super(key, value);
@@ -26,6 +26,46 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         public void setColorRed() {
             this.color = false;
         }
+
+        @Override
+        public RBNode getParent() {
+            return parent;
+        }
+
+        @Override
+        public void setParent(Node parent) {
+            this.parent = (RBNode) parent;
+        }
+
+        @Override
+        public RBNode getLeft() {
+            return left;
+        }
+
+        @Override
+        public void setLeft(Node left) {
+            this.left = (RBNode) left;
+        }
+
+        @Override
+        public RBNode getRight() {
+            return right;
+        }
+
+        @Override
+        public void setRight(Node right) {
+            this.right = (RBNode) right;
+        }
+
+        @Override
+        Node getRoot() {
+            return root;
+        }
+
+        @Override
+        void setRoot(Node newRoot) {
+            root = (RBNode) newRoot;
+        }
     }
 
     public RedBlackTree() {
@@ -33,120 +73,102 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         this.root = NIL;
     }
 
-    public V search(K value) {
-        RBNode temp = this.root;
-
-        while (temp != this.NIL) {
-            if (temp.getKey().equals(value)) {
-                return temp.getValue();
-            } else if (temp.getKey().compareTo(value) < 0) {
-                temp = temp.right;
-            } else {
-                temp = temp.left;
-            }
-        }
-
-        return null;
+    @Override
+    public V search(K key) {
+        return searchNode(this.root, key, this.NIL).getValue();
     }
 
-    private RBNode searchNode(K value) {
-        RBNode temp = this.root;
-
-        while (temp != this.NIL) {
-            if (temp.getKey().equals(value)) {
-                return temp;
-            } else if (temp.getKey().compareTo(value) < 0) {
-                temp = temp.right;
-            } else {
-                temp = temp.left;
-            }
-        }
-
-        return null;
-    }
-
-    @SuppressWarnings("SuspiciousNameCombination")
+    @Override
     public void insert(K key, V value) {
-        RBNode insertedNode = new RBNode(key, value);
+        insertAlgorithm(new RBNode(key, value), this.NIL);
+    }
 
-        RBNode x = this.root, y = this.NIL;
+    @SuppressWarnings("SuspiciousNameCombination, unchecked")
+    protected <T extends RBNode> void insertAlgorithm(T insertedNode, T border) {
+        T x = (T) insertedNode.getRoot(), y = border;
 
-        while (x != this.NIL) {
+        while (x != border) {
             y = x;
 
             if (insertedNode.getKey().compareTo(x.getKey()) < 0) {
-                x = x.left;
+                x = (T) x.getLeft();
             } else {
-                x = x.right;
+                x = (T) x.getRight();
             }
         }
 
-        insertedNode.parent = y;
+        insertedNode.setParent(y);
 
-        if (y == this.NIL) {
-            this.root = insertedNode;
+        if (y == border) {
+            insertedNode.setRoot(insertedNode);
         } else if (insertedNode.getKey().compareTo(y.getKey()) < 0) {
-            y.left = insertedNode;
+            y.setLeft(insertedNode);
         } else {
-            y.right = insertedNode;
+            y.setRight(insertedNode);
         }
 
-        insertedNode.left = this.NIL;
-        insertedNode.right = this.NIL;
+        insertedNode.setLeft(border);
+        insertedNode.setRight(border);
         insertedNode.setColorRed();
 
-        insertFixup(insertedNode);
+        insertFixup(insertedNode, border);
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
-    private void insertFixup(RBNode currentNode) {
-        while (!currentNode.parent.getColor()) {
-            RBNode y;
+    @SuppressWarnings("unchecked")
+    private <T extends RBNode> void insertFixup(T currentNode, T border) {
+        while (!currentNode.getParent().getColor()) {
+            T y;
 
-            if (currentNode.parent == currentNode.parent.parent.left) {
-                y = currentNode.parent.parent.right;
+            if (currentNode.getParent() == currentNode.getParent().getParent().getLeft()) {
+                y = (T) currentNode.getParent().getParent().getRight();
 
                 if (!y.getColor()) {
-                    currentNode.parent.setColorBlack();
+                    currentNode.getParent().setColorBlack();
                     y.setColorBlack();
-                    currentNode.parent.parent.setColorRed();
-                    currentNode = currentNode.parent.parent;
+                    currentNode.getParent().getParent().setColorRed();
+                    currentNode = (T) currentNode.getParent().getParent();
                 } else {
-                    if (currentNode == currentNode.parent.right) {
-                        currentNode = currentNode.parent;
-                        leftRotate(currentNode);
+                    if (currentNode == currentNode.getParent().getRight()) {
+                        currentNode = (T) currentNode.getParent();
+                        leftRotate(currentNode, border);
                     }
 
-                    currentNode.parent.setColorBlack();
-                    currentNode.parent.parent.setColorRed();
-                    rightRotate(currentNode.parent.parent);
+                    currentNode.getParent().setColorBlack();
+                    currentNode.getParent().getParent().setColorRed();
+                    rightRotate(currentNode.getParent().getParent(), border);
                 }
             } else {
-                y = currentNode.parent.parent.left;
+                y = (T) currentNode.getParent().getParent().getLeft();
 
                 if (!y.getColor()) {
-                    currentNode.parent.setColorBlack();
+                    currentNode.getParent().setColorBlack();
                     y.setColorBlack();
-                    currentNode.parent.parent.setColorRed();
-                    currentNode = currentNode.parent.parent;
+                    currentNode.getParent().getParent().setColorRed();
+                    currentNode = (T) currentNode.getParent().getParent();
                 } else {
-                    if (currentNode == currentNode.parent.left) {
-                        currentNode = currentNode.parent;
-                        rightRotate(currentNode);
+                    if (currentNode == currentNode.getParent().getLeft()) {
+                        currentNode = (T) currentNode.getParent();
+                        rightRotate(currentNode, border);
                     }
 
-                    currentNode.parent.setColorBlack();
-                    currentNode.parent.parent.setColorRed();
-                    leftRotate(currentNode.parent.parent);
+                    currentNode.getParent().setColorBlack();
+                    currentNode.getParent().getParent().setColorRed();
+                    leftRotate(currentNode.getParent().getParent(), border);
                 }
             }
         }
 
-        this.root.setColorBlack();
+        ((RBNode) currentNode.getRoot()).setColorBlack();
     }
 
+    @Override
     public void delete(K key) {
-        RBNode deletedNode = searchNode(key), x, y;
+        deleteAlgorithm(searchNode(this.root, key, this.NIL), this.NIL);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends RBNode> void deleteAlgorithm(T deletedNode, T border) {
+        T x, y;
         boolean yOriginalColor;
 
         if (deletedNode == null) {
@@ -155,28 +177,28 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
             y = deletedNode;
             yOriginalColor = y.getColor();
 
-            if (deletedNode.left == this.NIL) {
-                x = deletedNode.right;
-                RBTreeTransplant(deletedNode, deletedNode.right);
-            } else if (deletedNode.right == this.NIL) {
-                x = deletedNode.left;
-                RBTreeTransplant(deletedNode, deletedNode.left);
+            if (deletedNode.getLeft() == border) {
+                x = (T) deletedNode.getRight();
+                RBTreeTransplant(deletedNode, deletedNode.getRight(), border);
+            } else if (deletedNode.getRight() == border) {
+                x = (T) deletedNode.getLeft();
+                RBTreeTransplant(deletedNode, deletedNode.getLeft(), border);
             } else {
-                y = treeMinimum(deletedNode.right);
+                y = treeMinimum((T) deletedNode.getRight(), border);
                 yOriginalColor = y.getColor();
-                x = y.right;
+                x = (T) y.getRight();
 
-                if (y.parent == deletedNode) {
-                    x.parent = y;
+                if (y.getParent() == deletedNode) {
+                    x.setParent(y);
                 } else {
-                    RBTreeTransplant(y, y.right);
-                    y.right = deletedNode.right;
-                    y.right.parent = y;
+                    RBTreeTransplant(y, y.getRight(), border);
+                    y.setRight(deletedNode.getRight());
+                    y.getRight().setParent(y);
                 }
 
-                RBTreeTransplant(deletedNode, y);
-                y.left = deletedNode.left;
-                y.left.parent = y;
+                RBTreeTransplant(deletedNode, y, border);
+                y.setLeft(deletedNode.getLeft());
+                y.getLeft().setParent(y);
 
                 if (deletedNode.getColor()) {
                     y.setColorBlack();
@@ -186,155 +208,101 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
             }
 
             if (yOriginalColor) {
-                deleteFixup(x);
+                deleteFixup((T) deletedNode.getRoot(), x, border);
             }
         }
     }
 
-    private void deleteFixup(RBNode value) {
-        RBNode temp;
+    @SuppressWarnings("unchecked")
+    protected <T extends RBNode> void deleteFixup(T root, T currentNode, T border) {
+        T temp;
 
-        while (value != this.root && value.getColor()) {
-            if (value == value.parent.left) {
-                temp = value.parent.right;
+        while (currentNode != root && currentNode.getColor()) {
+            if (currentNode == currentNode.getParent().getLeft()) {
+                temp = (T) currentNode.getParent().getRight();
 
                 if (!temp.getColor()) {
                     temp.setColorBlack();
-                    value.parent.setColorRed();
-                    leftRotate(value.parent);
-                    temp = value.parent.right;
+                    currentNode.getParent().setColorRed();
+                    leftRotate(currentNode.getParent(), border);
+                    temp = (T) currentNode.getParent().getRight();
                 }
 
-                if (temp.left.getColor() && temp.right.getColor()) {
+                if (temp.getLeft().getColor() && temp.getRight().getColor()) {
                     temp.setColorRed();
-                    value = value.parent;
+                    currentNode = (T) currentNode.getParent();
                 } else {
-                    if (temp.right.getColor()) {
-                        temp.left.setColorBlack();
+                    if (temp.getRight().getColor()) {
+                        temp.getLeft().setColorBlack();
                         temp.setColorRed();
-                        rightRotate(temp);
-                        temp = value.parent.right;
+                        rightRotate(temp, border);
+                        temp = (T) currentNode.getParent().getRight();
                     }
 
-                    if (value.parent.getColor()) {
+                    if (currentNode.getParent().getColor()) {
                         temp.setColorBlack();
                     } else {
                         temp.setColorRed();
                     }
 
-                    value.parent.setColorBlack();
-                    temp.right.setColorBlack();
-                    leftRotate(value.parent);
-                    value = this.root;
+                    currentNode.getParent().setColorBlack();
+                    temp.getRight().setColorBlack();
+                    leftRotate(currentNode.getParent(), border);
+                    currentNode = root;
                 }
             } else {
-                temp = value.parent.left;
+                temp = (T) currentNode.getParent().getLeft();
 
                 if (!temp.getColor()) {
                     temp.setColorBlack();
-                    value.parent.setColorRed();
-                    leftRotate(value.parent);
-                    temp = value.parent.left;
+                    currentNode.getParent().setColorRed();
+                    rightRotate(currentNode.getParent(), border);
+                    temp = (T) currentNode.getParent().getLeft();
                 }
 
-                if (temp.right.getColor() && temp.left.getColor()) {
+                if (temp.getRight().getColor() && temp.getLeft().getColor()) {
                     temp.setColorRed();
-                    value = value.parent;
+                    currentNode = (T) currentNode.getParent();
                 } else {
-                    if (temp.left.getColor()) {
-                        temp.right.setColorBlack();
+                    if (temp.getLeft().getColor()) {
+                        temp.getRight().setColorBlack();
                         temp.setColorRed();
-                        leftRotate(temp);
-                        temp = value.parent.left;
+                        leftRotate(temp, border);
+                        temp = (T) currentNode.getParent().getLeft();
                     }
 
-                    if (value.parent.getColor()) {
+                    if (currentNode.getParent().getColor()) {
                         temp.setColorBlack();
                     } else {
                         temp.setColorRed();
                     }
 
-                    value.parent.setColorBlack();
-                    temp.left.setColorBlack();
-                    rightRotate(value.parent);
-                    value = this.root;
+                    currentNode.getParent().setColorBlack();
+                    temp.getLeft().setColorBlack();
+                    rightRotate(currentNode.getParent(), border);
+                    currentNode = root;
                 }
             }
         }
 
-        value.setColorBlack();
+        currentNode.setColorBlack();
     }
 
-    @SuppressWarnings("SuspiciousNameCombination")
-    protected void leftRotate(RBNode x) {
-        RBNode y = x.right;
-        x.right = y.left;
-
-        if (y.left != this.NIL) {
-            y.left.parent = x;
-        }
-
-        y.parent = x.parent;
-
-        if (x.parent == this.NIL) {
-            this.root = y;
-        } else if (x == x.parent.left) {
-            x.parent.left = y;
+    protected <T extends RBNode> void RBTreeTransplant(T first, T second, T border) {
+        if (first.getParent() == border) {
+            first.setRoot(second);
+        } else if (first == first.getParent().getLeft()) {
+            first.getParent().setLeft(second);
         } else {
-            x.parent.right = y;
+            first.getParent().setRight(second);
         }
 
-        y.left = x;
-        x.parent = y;
-    }
-
-    @SuppressWarnings("SuspiciousNameCombination")
-    protected void rightRotate(RBNode y) {
-        RBNode x = y.left;
-        y.left = x.right;
-
-        if (x.right != this.NIL) {
-            x.right.parent = y;
-        }
-
-        x.parent = y.parent;
-
-        if (y.parent == this.NIL) {
-            this.root = x;
-        } else if (y == y.parent.right) {
-            y.parent.right = x;
-        } else {
-            y.parent.left = x;
-        }
-
-        x.right = y;
-        y.parent = x;
-    }
-
-    private void RBTreeTransplant(RBNode first, RBNode second) {
-        if (first.parent == this.NIL) {
-            this.root = second;
-        } else if (first == first.parent.left) {
-            first.parent.left = second;
-        } else {
-            first.parent.right = second;
-        }
-
-        second.parent = first.parent;
-    }
-
-    private RBNode treeMinimum(RBNode x) {
-        while (x.left != this.NIL) {
-            x = x.left;
-        }
-
-        return x;
+        second.setParent(first.getParent());
     }
 
     @Override
     public void print() {
-        RBNode temp = this.root;
-        redBlackTreePrintMethod(temp, 0);
+        redBlackTreePrintMethod(this.root, 0);
     }
 
     private void redBlackTreePrintMethod(RedBlackTree<? extends Comparable<?>, ?>.RBNode node, int n) {
