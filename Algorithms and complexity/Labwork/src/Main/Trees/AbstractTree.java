@@ -1,4 +1,4 @@
-package Trees;
+package main.Trees;
 
 public abstract class AbstractTree<K extends Comparable<K>, V> {
 

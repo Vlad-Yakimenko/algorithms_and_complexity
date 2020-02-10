@@ -1,4 +1,4 @@
-package Trees;
+package main.Trees;
 
 public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree<K, V> {
 

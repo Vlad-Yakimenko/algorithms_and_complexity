@@ -1,10 +1,6 @@
-package Main;
+package main.Main;
 
-import Trees.AbstractTree;
-import Trees.OrderStatisticTree;
-import Trees.RedBlackTree;
-
-import java.util.Random;
+import main.Trees.OrderStatisticTree;
 
 public class Main {
 
@@ -39,9 +35,9 @@ public class Main {
 //
 //        List<Schedule> list = new ArrayList<>(set);
 //
-//        List<Main.Schedule> buffer = Main.GettingSchedule.getSchedule();
+//        List<main.Main.Schedule> buffer = main.Main.GettingSchedule.getSchedule();
 //
-//        for (Main.Schedule schedule : buffer) {
+//        for (main.Main.Schedule schedule : buffer) {
 //            list.add(new Pair<>(schedule.getDay(), schedule.getLessons()));
 //        }
 //
