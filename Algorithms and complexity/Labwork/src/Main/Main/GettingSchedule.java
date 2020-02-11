@@ -1,33 +1,47 @@
 package main.Main;
 
-import java.io.FileReader;
-import java.io.IOException;
+import main.DatabaseManager.DatabaseManager;
+import main.DatabaseManager.JDBCDatabaseManager;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 public class GettingSchedule {
 
+    private static DatabaseManager databaseManager = new JDBCDatabaseManager();
+
+    static {
+        try {
+            databaseManager.connect("postgres", "password");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     static List<Schedule> getSchedule() {
-        try (FileReader fileReader = new FileReader("src/ScheduleForTest.txt")) {
-            Scanner scanner = new Scanner(fileReader);
+        List<Schedule> buffer = new ArrayList<>();
 
-            List<Schedule> buffer = new ArrayList<>();
+        ResultSet resultSet = databaseManager.getSchedule();
+        try {
+            while (resultSet.next()) {
+                String key = resultSet.getString("day");
+                String[] value = resultSet.getString("lessons")
+                        .replaceAll("\\[", "")
+                        .replaceAll("]", "")
+                        .split(", ");
 
-            while (scanner.hasNextLine()) {
-                Schedule schedule = new Schedule(scanner.nextLine());
-
-                schedule.setLessons(Arrays.asList(scanner.nextLine().split(", ")));
+                Schedule schedule = new Schedule(key);
+                schedule.setLessons(Arrays.asList(value));
 
                 buffer.add(schedule);
             }
-
-            return buffer;
-        } catch (IOException e) {
-            System.out.println("This file doesn't exists!");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        return null;
+        return buffer;
     }
 }

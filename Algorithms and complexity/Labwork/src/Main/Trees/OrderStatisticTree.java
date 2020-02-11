@@ -64,7 +64,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
         @Override
         public String toString() {
-            return "" + this.getKey() + "=" + this.size;
+            return "" + this.getKey() + "=size:" + this.size;
         }
     }
 
@@ -237,7 +237,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
             for (int i = 0; i < n; i++) {
                 System.out.print(" ");
             }
-            System.out.println("" + node.getKey() + "=" + node.size + "=" + node.getColor());
+            System.out.println("" + node.getKey() + "=size:" + node.size + "=" + node.getValue());
 
             orderStatisticTreePrintMethod(node.left, n + 10);
         }
