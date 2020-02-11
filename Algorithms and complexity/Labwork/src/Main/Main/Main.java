@@ -1,6 +1,16 @@
 package main.Main;
 
+import javafx.util.Pair;
+import main.DatabaseManager.DatabaseManager;
+import main.DatabaseManager.JDBCDatabaseManager;
+import main.PerfectHashing.PerfectHashMap;
 import main.Trees.OrderStatisticTree;
+import main.Trees.RedBlackTree;
+
+import java.security.SecureRandom;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class Main {
 
@@ -99,33 +109,80 @@ public class Main {
 //        redBlackTree.print();
 //    }
 
+//    public static void main(String[] args) {
+//        OrderStatisticTree<Integer, String> orderStatisticTree = new OrderStatisticTree<>();
+//        orderStatisticTree.insert(87, null);
+//        orderStatisticTree.insert(3, null);
+//        orderStatisticTree.insert(67, null);
+//        orderStatisticTree.insert(11, null);
+//        orderStatisticTree.insert(56, "Hello");
+//        orderStatisticTree.insert(12, "Gotcha!");
+//        orderStatisticTree.insert(7, null);
+//        orderStatisticTree.insert(5, "Lol");
+//        orderStatisticTree.insert(1, null);
+//        orderStatisticTree.insert(77, null);
+//        orderStatisticTree.insert(9, null);
+//        orderStatisticTree.insert(45, null);
+//
+//        orderStatisticTree.print();
+//        System.out.println("______________________");
+//
+//        orderStatisticTree.delete(87);
+//        orderStatisticTree.delete(9);
+//        orderStatisticTree.delete(5);
+//        orderStatisticTree.delete(45);
+//        orderStatisticTree.print();
+//
+//        System.out.println("______________________");
+//
+//        System.out.println(orderStatisticTree.selectOST(orderStatisticTree.getRank(3)));
+//        System.out.println(orderStatisticTree.search(56));
+//    }
+
     public static void main(String[] args) {
-        OrderStatisticTree<Integer, String> orderStatisticTree = new OrderStatisticTree<>();
-        orderStatisticTree.insert(87, null);
-        orderStatisticTree.insert(3, null);
-        orderStatisticTree.insert(67, null);
-        orderStatisticTree.insert(11, null);
-        orderStatisticTree.insert(56, "Hello");
-        orderStatisticTree.insert(12, "Gotcha!");
-        orderStatisticTree.insert(7, null);
-        orderStatisticTree.insert(5, "Lol");
-        orderStatisticTree.insert(1, null);
-        orderStatisticTree.insert(77, null);
-        orderStatisticTree.insert(9, null);
-        orderStatisticTree.insert(45, null);
+        DatabaseManager databaseManager = new JDBCDatabaseManager();
+        try {
+            databaseManager.connect("postgres", "password");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+//        Random random = new Random();
+//        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+//        String[] disciplines = {"Programming", "Math", "English", "Ecology", "WEB", "Algorithms"};
+//        int counter = 0;
+//
+//        for (int i = 0; i < 50; i++) {
+//            if (days[i % 5].equals("Monday")) counter++;
+//
+//            List<String> lessons = new ArrayList<>();
+//            int amountOfLessons = random.nextInt(5);
+//            for (int j = 0; j < amountOfLessons; j++) {
+//                lessons.add(disciplines[random.nextInt(6)]);
+//            }
+//
+//            databaseManager.addDayToSchedule(days[i % 5] + counter, lessons.toString());
+//        }
+
+        OrderStatisticTree<String, List<String>> orderStatisticTree = new OrderStatisticTree<>();
+        ResultSet resultSet = databaseManager.getSchedule();
+        try {
+            while (resultSet.next()) {
+                String key = resultSet.getString("day");
+                String[] value = resultSet.getString("lessons")
+                        .replaceAll("\\[", "")
+                        .replaceAll("]", "")
+                        .split(", ");
+
+                orderStatisticTree.insert(key, Arrays.asList(value));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         orderStatisticTree.print();
-        System.out.println("______________________");
 
-        orderStatisticTree.delete(87);
-        orderStatisticTree.delete(9);
-        orderStatisticTree.delete(5);
-        orderStatisticTree.delete(45);
-        orderStatisticTree.print();
-
-        System.out.println("______________________");
-
-        System.out.println(orderStatisticTree.selectOST(orderStatisticTree.getRank(3)));
-        System.out.println(orderStatisticTree.search(56));
+        System.out.println(orderStatisticTree.getRank("Friday5"));
+        System.out.println(orderStatisticTree.selectOST(6));
     }
 }
