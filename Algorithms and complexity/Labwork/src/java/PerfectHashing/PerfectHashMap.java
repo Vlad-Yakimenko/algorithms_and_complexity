@@ -1,6 +1,6 @@
-package main.PerfectHashing;
+package PerfectHashing;
 
-import main.Main.Schedule;
+import Main.Schedule;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,7 +97,7 @@ public class PerfectHashMap {
     }
 
     public void getHashTableSize() {
-        System.out.println("main.Main.Main HashMap size: " + perfectHashMap.length);
+        System.out.println("java.Main.Main HashMap size: " + perfectHashMap.length);
 
         int i = 0;
         for (SecondHashTable secondHashTable : perfectHashMap) {

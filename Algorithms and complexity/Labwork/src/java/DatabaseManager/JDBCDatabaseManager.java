@@ -1,4 +1,4 @@
-package main.DatabaseManager;
+package DatabaseManager;
 
 import java.sql.*;
 

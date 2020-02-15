@@ -1,8 +1,9 @@
-package main.Trees;
+package Trees;
 
 public abstract class AbstractTree<K extends Comparable<K>, V> {
 
-    private Node root;
+    protected Node root;
+    protected Node NIL;
 
     protected class Node {
         private K key;
@@ -62,10 +63,10 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
     public abstract void delete(K key);
 
     @SuppressWarnings("unchecked")
-    protected <T extends Node> T searchNode(T root, K key, T border)  {
+    protected <T extends Node> T searchNode(T root, K key)  {
         T temp = root;
 
-        while (temp != border) {
+        while (temp != NIL) {
             if (temp.getKey().equals(key)) {
                 return temp;
             } else if (temp.getKey().compareTo(key) < 0) {
@@ -79,8 +80,8 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends Node> T treeMinimum(T root, T border) {
-        while (root.getLeft() != border) {
+    protected <T extends Node> T treeMinimum(T root) {
+        while (root.getLeft() != NIL) {
             root = (T) root.getLeft();
         }
 
@@ -88,17 +89,17 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
     }
 
     @SuppressWarnings("SuspiciousNameCombination, unchecked")
-    protected <T extends Node> void leftRotate(T x, T border) {
+    protected <T extends Node> void leftRotate(T x) {
         T y = (T) x.getRight();
         x.setRight(y.getLeft());
 
-        if (y.getLeft() != border) {
+        if (y.getLeft() != NIL) {
             y.getLeft().setParent(x);
         }
 
         y.setParent(x.getParent());
 
-        if (x.getParent() == border) {
+        if (x.getParent() == NIL) {
             x.setRoot(y);
         } else if (x == x.getParent().getLeft()) {
             x.getParent().setLeft(y);
@@ -111,17 +112,17 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
     }
 
     @SuppressWarnings("SuspiciousNameCombination, unchecked")
-    protected <T extends Node> void rightRotate(T y, T border) {
+    protected <T extends Node> void rightRotate(T y) {
         T x = (T) y.getLeft();
         y.setLeft(x.getRight());
 
-        if (x.getRight() != border) {
+        if (x.getRight() != NIL) {
             x.getRight().setParent(y);
         }
 
         x.setParent(y.getParent());
 
-        if (y.getParent() == border) {
+        if (y.getParent() == NIL) {
             y.setRoot(x);
         } else if (y == y.getParent().getRight()) {
             y.getParent().setRight(x);

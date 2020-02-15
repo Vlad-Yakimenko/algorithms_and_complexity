@@ -1,6 +1,6 @@
-package main.PerfectHashing;
+package PerfectHashing;
 
-import main.Main.Schedule;
+import Main.Schedule;
 
 public class SecondHashTable {
 

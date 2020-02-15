@@ -1,9 +1,6 @@
-package main.Trees;
+package Trees;
 
 public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
-
-    private RBNode root;
-    private final RBNode NIL;
 
     protected class RBNode extends Node {
         private boolean color;
@@ -12,7 +9,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         public RBNode(K key, V value) {
             super(key, value);
             this.color = true;
-            parent = left = right = NIL;
+            parent = left = right = (RBNode) NIL;
         }
 
         public boolean getColor() {
@@ -64,7 +61,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
 
         @Override
         void setRoot(Node newRoot) {
-            root = (RBNode) newRoot;
+            root = newRoot;
         }
     }
 
@@ -75,19 +72,19 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
 
     @Override
     public V search(K key) {
-        return searchNode(this.root, key, this.NIL).getValue();
+        return searchNode(this.root, key).getValue();
     }
 
     @Override
     public void insert(K key, V value) {
-        insertAlgorithm(new RBNode(key, value), this.NIL);
+        insertAlgorithm(new RBNode(key, value));
     }
 
     @SuppressWarnings("SuspiciousNameCombination, unchecked")
-    protected <T extends RBNode> void insertAlgorithm(T insertedNode, T border) {
-        T x = (T) insertedNode.getRoot(), y = border;
+    protected <T extends RBNode> void insertAlgorithm(T insertedNode) {
+        T x = (T) insertedNode.getRoot(), y = (T) NIL;
 
-        while (x != border) {
+        while (x != NIL) {
             y = x;
 
             if (insertedNode.getKey().compareTo(x.getKey()) < 0) {
@@ -99,7 +96,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
 
         insertedNode.setParent(y);
 
-        if (y == border) {
+        if (y == NIL) {
             insertedNode.setRoot(insertedNode);
         } else if (insertedNode.getKey().compareTo(y.getKey()) < 0) {
             y.setLeft(insertedNode);
@@ -107,15 +104,15 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
             y.setRight(insertedNode);
         }
 
-        insertedNode.setLeft(border);
-        insertedNode.setRight(border);
+        insertedNode.setLeft(NIL);
+        insertedNode.setRight(NIL);
         insertedNode.setColorRed();
 
-        insertFixup(insertedNode, border);
+        insertFixup(insertedNode);
     }
 
     @SuppressWarnings("unchecked")
-    private <T extends RBNode> void insertFixup(T currentNode, T border) {
+    private <T extends RBNode> void insertFixup(T currentNode) {
         while (!currentNode.getParent().getColor()) {
             T y;
 
@@ -130,12 +127,12 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
                 } else {
                     if (currentNode == currentNode.getParent().getRight()) {
                         currentNode = (T) currentNode.getParent();
-                        leftRotate(currentNode, border);
+                        leftRotate(currentNode);
                     }
 
                     currentNode.getParent().setColorBlack();
                     currentNode.getParent().getParent().setColorRed();
-                    rightRotate(currentNode.getParent().getParent(), border);
+                    rightRotate(currentNode.getParent().getParent());
                 }
             } else {
                 y = (T) currentNode.getParent().getParent().getLeft();
@@ -148,12 +145,12 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
                 } else {
                     if (currentNode == currentNode.getParent().getLeft()) {
                         currentNode = (T) currentNode.getParent();
-                        rightRotate(currentNode, border);
+                        rightRotate(currentNode);
                     }
 
                     currentNode.getParent().setColorBlack();
                     currentNode.getParent().getParent().setColorRed();
-                    leftRotate(currentNode.getParent().getParent(), border);
+                    leftRotate(currentNode.getParent().getParent());
                 }
             }
         }
@@ -163,11 +160,11 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
 
     @Override
     public void delete(K key) {
-        deleteAlgorithm(searchNode(this.root, key, this.NIL), this.NIL);
+        deleteAlgorithm(searchNode((RBNode) this.root, key));
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends RBNode> void deleteAlgorithm(T deletedNode, T border) {
+    protected <T extends RBNode> void deleteAlgorithm(T deletedNode) {
         T x, y;
         boolean yOriginalColor;
 
@@ -177,26 +174,26 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
             y = deletedNode;
             yOriginalColor = y.getColor();
 
-            if (deletedNode.getLeft() == border) {
+            if (deletedNode.getLeft() == NIL) {
                 x = (T) deletedNode.getRight();
-                RBTreeTransplant(deletedNode, deletedNode.getRight(), border);
-            } else if (deletedNode.getRight() == border) {
+                RBTreeTransplant(deletedNode, deletedNode.getRight());
+            } else if (deletedNode.getRight() == NIL) {
                 x = (T) deletedNode.getLeft();
-                RBTreeTransplant(deletedNode, deletedNode.getLeft(), border);
+                RBTreeTransplant(deletedNode, deletedNode.getLeft());
             } else {
-                y = treeMinimum((T) deletedNode.getRight(), border);
+                y = treeMinimum((T) deletedNode.getRight());
                 yOriginalColor = y.getColor();
                 x = (T) y.getRight();
 
                 if (y.getParent() == deletedNode) {
                     x.setParent(y);
                 } else {
-                    RBTreeTransplant(y, y.getRight(), border);
+                    RBTreeTransplant(y, y.getRight());
                     y.setRight(deletedNode.getRight());
                     y.getRight().setParent(y);
                 }
 
-                RBTreeTransplant(deletedNode, y, border);
+                RBTreeTransplant(deletedNode, y);
                 y.setLeft(deletedNode.getLeft());
                 y.getLeft().setParent(y);
 
@@ -208,13 +205,13 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
             }
 
             if (yOriginalColor) {
-                deleteFixup((T) deletedNode.getRoot(), x, border);
+                deleteFixup((T) deletedNode.getRoot(), x);
             }
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends RBNode> void deleteFixup(T root, T currentNode, T border) {
+    protected <T extends RBNode> void deleteFixup(T root, T currentNode) {
         T temp;
 
         while (currentNode != root && currentNode.getColor()) {
@@ -224,7 +221,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
                 if (!temp.getColor()) {
                     temp.setColorBlack();
                     currentNode.getParent().setColorRed();
-                    leftRotate(currentNode.getParent(), border);
+                    leftRotate(currentNode.getParent());
                     temp = (T) currentNode.getParent().getRight();
                 }
 
@@ -235,7 +232,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
                     if (temp.getRight().getColor()) {
                         temp.getLeft().setColorBlack();
                         temp.setColorRed();
-                        rightRotate(temp, border);
+                        rightRotate(temp);
                         temp = (T) currentNode.getParent().getRight();
                     }
 
@@ -247,7 +244,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
 
                     currentNode.getParent().setColorBlack();
                     temp.getRight().setColorBlack();
-                    leftRotate(currentNode.getParent(), border);
+                    leftRotate(currentNode.getParent());
                     currentNode = root;
                 }
             } else {
@@ -256,7 +253,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
                 if (!temp.getColor()) {
                     temp.setColorBlack();
                     currentNode.getParent().setColorRed();
-                    rightRotate(currentNode.getParent(), border);
+                    rightRotate(currentNode.getParent());
                     temp = (T) currentNode.getParent().getLeft();
                 }
 
@@ -267,7 +264,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
                     if (temp.getLeft().getColor()) {
                         temp.getRight().setColorBlack();
                         temp.setColorRed();
-                        leftRotate(temp, border);
+                        leftRotate(temp);
                         temp = (T) currentNode.getParent().getLeft();
                     }
 
@@ -279,7 +276,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
 
                     currentNode.getParent().setColorBlack();
                     temp.getLeft().setColorBlack();
-                    rightRotate(currentNode.getParent(), border);
+                    rightRotate(currentNode.getParent());
                     currentNode = root;
                 }
             }
@@ -288,8 +285,8 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         currentNode.setColorBlack();
     }
 
-    protected <T extends RBNode> void RBTreeTransplant(T first, T second, T border) {
-        if (first.getParent() == border) {
+    protected <T extends RBNode> void RBTreeTransplant(T first, T second) {
+        if (first.getParent() == NIL) {
             first.setRoot(second);
         } else if (first == first.getParent().getLeft()) {
             first.getParent().setLeft(second);
@@ -302,7 +299,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
 
     @Override
     public void print() {
-        redBlackTreePrintMethod(this.root, 0);
+        redBlackTreePrintMethod((RBNode) this.root, 0);
     }
 
     private void redBlackTreePrintMethod(RedBlackTree<? extends Comparable<?>, ?>.RBNode node, int n) {

@@ -1,9 +1,6 @@
-package main.Trees;
+package Trees;
 
 public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree<K, V> {
-
-    private OSNode root;
-    private final OSNode NIL;
 
     private class OSNode extends RBNode {
         private int size;
@@ -11,7 +8,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
         public OSNode(K key, V value) {
             super(key, value);
-            parent = left = right = NIL;
+            parent = left = right = (OSNode) NIL;
         }
 
         public void incrementSize() {
@@ -59,7 +56,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
         @Override
         void setRoot(Node newRoot) {
-            root = (OSNode) newRoot;
+            root = newRoot;
         }
 
         @Override
@@ -69,13 +66,14 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     public OrderStatisticTree() {
+        this.NIL = null;
         this.NIL = new OSNode(null, null);
         this.root = NIL;
     }
 
     @Override
     public V search(K key) {
-        return searchNode(this.root, key, this.NIL).getValue();
+        return searchNode(this.root, key).getValue();
     }
 
     @Override
@@ -84,18 +82,18 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
         node.incrementSize();
         increaseSizes(key);
 
-        insertAlgorithm(node, this.NIL);
+        insertAlgorithm(node);
     }
 
     @Override
     public void delete(K key) {
         decreaseSizes(key);
-        deleteAlgorithm(searchNode(this.root, key, this.NIL), this.NIL);
+        deleteAlgorithm(searchNode((OSNode) this.root, key));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <T extends RBNode> void deleteAlgorithm(T deletedNode, T border) {
+    protected <T extends RBNode> void deleteAlgorithm(T deletedNode) {
         T x, y;
         boolean yOriginalColor;
 
@@ -105,34 +103,34 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
             y = deletedNode;
             yOriginalColor = y.getColor();
 
-            if (deletedNode.getLeft() == border) {
+            if (deletedNode.getLeft() == NIL) {
                 x = (T) deletedNode.getRight();
-                RBTreeTransplant(deletedNode, deletedNode.getRight(), border);
+                RBTreeTransplant(deletedNode, deletedNode.getRight());
 
-                if (x != border) {
+                if (x != NIL) {
                     ((OSNode) x).size = ((OSNode) x).left.size + ((OSNode) x).right.size + 1;
                 }
-            } else if (deletedNode.getRight() == border) {
+            } else if (deletedNode.getRight() == NIL) {
                 x = (T) deletedNode.getLeft();
-                RBTreeTransplant(deletedNode, deletedNode.getLeft(), border);
+                RBTreeTransplant(deletedNode, deletedNode.getLeft());
 
-                if (x != border) {
+                if (x != NIL) {
                     ((OSNode) x).size = ((OSNode) x).left.size + ((OSNode) x).right.size + 1;
                 }
             } else {
-                y = treeMinimum((T) deletedNode.getRight(), border);
+                y = treeMinimum((T) deletedNode.getRight());
                 yOriginalColor = y.getColor();
                 x = (T) y.getRight();
 
                 if (y.getParent() != deletedNode) {
-                    RBTreeTransplant(y, y.getRight(), border);
+                    RBTreeTransplant(y, y.getRight());
                     y.setRight(deletedNode.getRight());
                     y.getRight().setParent(y);
                 } else {
                     x.setParent(y);
                 }
 
-                RBTreeTransplant(deletedNode, y, border);
+                RBTreeTransplant(deletedNode, y);
                 y.setLeft(deletedNode.getLeft());
                 y.getLeft().setParent(y);
                 ((OSNode) y).size = ((OSNode) y).left.size + ((OSNode) y).right.size + 1;
@@ -145,13 +143,13 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
             }
 
             if (yOriginalColor) {
-                deleteFixup((T) deletedNode.getRoot(), x, border);
+                deleteFixup((T) deletedNode.getRoot(), x);
             }
         }
     }
 
     public OSNode selectOST(int rank) {
-        return recursiveSelect(this.root, rank);
+        return recursiveSelect((OSNode) this.root, rank);
     }
 
     private OSNode recursiveSelect(OSNode root, int rank) {
@@ -167,7 +165,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     public int getRank(K key) {
-        OSNode node = searchNode(this.root, key, this.NIL);
+        OSNode node = searchNode((OSNode) this.root, key);
 
         int rank = node.getLeft().size + 1;
 
@@ -183,7 +181,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     private void increaseSizes(K key) {
-        OSNode temp = this.root;
+        OSNode temp = (OSNode) this.root;
 
         while (temp != this.NIL) {
             temp.incrementSize();
@@ -192,7 +190,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     private void decreaseSizes(K key) {
-        OSNode temp = this.root;
+        OSNode temp = (OSNode) this.root;
 
         while (temp != this.NIL) {
             temp.decrementSize();
@@ -203,11 +201,11 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <T extends Node> void leftRotate(T x, T border) {
+    protected <T extends Node> void leftRotate(T x) {
         OSNode temp = (OSNode) x;
         OSNode y = temp.getRight();
 
-        super.leftRotate(x, border);
+        super.leftRotate(x);
 
         y.size = temp.size;
         temp.size = temp.left.size + temp.right.size + 1;
@@ -215,11 +213,11 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
     @Override
     @SuppressWarnings("unchecked")
-    protected <T extends Node> void rightRotate(T y, T border) {
+    protected <T extends Node> void rightRotate(T y) {
         OSNode temp = (OSNode) y;
         OSNode x = temp.getLeft();
 
-        super.rightRotate(y, border);
+        super.rightRotate(y);
 
         x.size = temp.size;
         temp.size = temp.left.size + temp.right.size + 1;
@@ -227,11 +225,11 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
     @Override
     public void print() {
-        orderStatisticTreePrintMethod(this.root, 0);
+        orderStatisticTreePrintMethod((OSNode) this.root, 0);
     }
 
     private void orderStatisticTreePrintMethod(OrderStatisticTree<? extends Comparable<?>, ?>.OSNode node, int n) {
-        if (node != null) {
+        if (node != this.NIL) {
             orderStatisticTreePrintMethod(node.right, n + 10);
 
             for (int i = 0; i < n; i++) {

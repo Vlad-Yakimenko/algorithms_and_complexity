@@ -1,4 +1,4 @@
-package main.PerfectHashing;
+package PerfectHashing;
 
 import java.util.Random;
 

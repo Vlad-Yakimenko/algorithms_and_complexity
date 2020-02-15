@@ -1,15 +1,12 @@
-package main.Main;
+package Main;
 
+import PerfectHashing.PerfectHashMap;
+import Trees.AbstractTree;
+import Trees.OrderStatisticTree;
+import Trees.RedBlackTree;
 import javafx.util.Pair;
-import main.DatabaseManager.DatabaseManager;
-import main.DatabaseManager.JDBCDatabaseManager;
-import main.PerfectHashing.PerfectHashMap;
-import main.Trees.OrderStatisticTree;
-import main.Trees.RedBlackTree;
 
 import java.security.SecureRandom;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 
 public class Main {
@@ -45,9 +42,9 @@ public class Main {
 //
 //        List<Schedule> list = new ArrayList<>(set);
 //
-//        List<main.Main.Schedule> buffer = main.Main.GettingSchedule.getSchedule();
+//        List<Schedule> buffer = GettingSchedule.getSchedule();
 //
-//        for (main.Main.Schedule schedule : buffer) {
+//        for (Schedule schedule : buffer) {
 //            list.add(new Pair<>(schedule.getDay(), schedule.getLessons()));
 //        }
 //
@@ -140,13 +137,6 @@ public class Main {
 //    }
 
     public static void main(String[] args) {
-        DatabaseManager databaseManager = new JDBCDatabaseManager();
-        try {
-            databaseManager.connect("postgres", "password");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
 //        Random random = new Random();
 //        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
 //        String[] disciplines = {"Programming", "Math", "English", "Ecology", "WEB", "Algorithms"};
@@ -165,19 +155,10 @@ public class Main {
 //        }
 
         OrderStatisticTree<String, List<String>> orderStatisticTree = new OrderStatisticTree<>();
-        ResultSet resultSet = databaseManager.getSchedule();
-        try {
-            while (resultSet.next()) {
-                String key = resultSet.getString("day");
-                String[] value = resultSet.getString("lessons")
-                        .replaceAll("\\[", "")
-                        .replaceAll("]", "")
-                        .split(", ");
 
-                orderStatisticTree.insert(key, Arrays.asList(value));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        List<Schedule> scheduleList = GettingSchedule.getSchedule();
+        for (Schedule schedule : scheduleList) {
+            orderStatisticTree.insert(schedule.getDay(), schedule.getLessons());
         }
 
         orderStatisticTree.print();

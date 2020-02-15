@@ -1,7 +1,7 @@
-package main.Main;
+package Main;
 
-import main.DatabaseManager.DatabaseManager;
-import main.DatabaseManager.JDBCDatabaseManager;
+import DatabaseManager.DatabaseManager;
+import DatabaseManager.JDBCDatabaseManager;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
