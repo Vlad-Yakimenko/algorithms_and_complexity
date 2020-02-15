@@ -134,6 +134,18 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
         y.setParent(x);
     }
 
+    protected <T extends Node> void transplant(T first, T second) {
+        if (first.getParent() == null)
+            this.root = second;
+        else if (first == first.getParent().getLeft())
+            first.getParent().setLeft(second);
+        else
+            first.getParent().setRight(second);
+
+        if (second != null)
+            second.setParent(first.getParent());
+    }
+
     public void print() {
         AbstractTreePrintMethod(this.root, 0);
     }

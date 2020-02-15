@@ -4,6 +4,7 @@ import PerfectHashing.PerfectHashMap;
 import Trees.AbstractTree;
 import Trees.OrderStatisticTree;
 import Trees.RedBlackTree;
+import Trees.SplayTree;
 import javafx.util.Pair;
 
 import java.security.SecureRandom;
@@ -136,34 +137,74 @@ public class Main {
 //        System.out.println(orderStatisticTree.search(56));
 //    }
 
-    public static void main(String[] args) {
-//        Random random = new Random();
-//        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
-//        String[] disciplines = {"Programming", "Math", "English", "Ecology", "WEB", "Algorithms"};
-//        int counter = 0;
+//    public static void main(String[] args) {
+////        Random random = new Random();
+////        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+////        String[] disciplines = {"Programming", "Math", "English", "Ecology", "WEB", "Algorithms"};
+////        int counter = 0;
+////
+////        for (int i = 0; i < 50; i++) {
+////            if (days[i % 5].equals("Monday")) counter++;
+////
+////            List<String> lessons = new ArrayList<>();
+////            int amountOfLessons = random.nextInt(5);
+////            for (int j = 0; j < amountOfLessons; j++) {
+////                lessons.add(disciplines[random.nextInt(6)]);
+////            }
+////
+////            databaseManager.addDayToSchedule(days[i % 5] + counter, lessons.toString());
+////        }
 //
-//        for (int i = 0; i < 50; i++) {
-//            if (days[i % 5].equals("Monday")) counter++;
+//        OrderStatisticTree<String, List<String>> orderStatisticTree = new OrderStatisticTree<>();
 //
-//            List<String> lessons = new ArrayList<>();
-//            int amountOfLessons = random.nextInt(5);
-//            for (int j = 0; j < amountOfLessons; j++) {
-//                lessons.add(disciplines[random.nextInt(6)]);
-//            }
-//
-//            databaseManager.addDayToSchedule(days[i % 5] + counter, lessons.toString());
+//        List<Schedule> scheduleList = GettingSchedule.getSchedule();
+//        for (Schedule schedule : scheduleList) {
+//            orderStatisticTree.insert(schedule.getDay(), schedule.getLessons());
 //        }
+//
+//        orderStatisticTree.print();
+//
+//        System.out.println(orderStatisticTree.getRank("Friday5"));
+//        System.out.println(orderStatisticTree.selectOST(6));
+//    }
 
-        OrderStatisticTree<String, List<String>> orderStatisticTree = new OrderStatisticTree<>();
+    public static void main(String[] args) {
+        SplayTree<Integer, String> splayTree = new SplayTree<>();
 
-        List<Schedule> scheduleList = GettingSchedule.getSchedule();
-        for (Schedule schedule : scheduleList) {
-            orderStatisticTree.insert(schedule.getDay(), schedule.getLessons());
-        }
+        splayTree.insert(5, null);
+        splayTree.insert(6, null);
+        splayTree.insert(7, "lol");
+        splayTree.insert(8, null);
+        splayTree.print();
+        System.out.println("----------------------------------");
+        splayTree.insert(1, null);
+        splayTree.insert(45, "something");
+        splayTree.insert(65, null);
+        splayTree.print();
+        System.out.println("----------------------------------");
+        splayTree.insert(14, null);
+        splayTree.insert(25, "hello");
+        splayTree.insert(76, null);
+        splayTree.insert(88, null);
 
-        orderStatisticTree.print();
+        String string = splayTree.search(25);
+        splayTree.print();
+        System.out.println("----------------------------------");
+        splayTree.search(7);
+        splayTree.print();
+        System.out.println("----------------------------------");
+        splayTree.search(14);
+        splayTree.print();
+        System.out.println("----------------------------------");
 
-        System.out.println(orderStatisticTree.getRank("Friday5"));
-        System.out.println(orderStatisticTree.selectOST(6));
+
+        splayTree.delete(25);
+        splayTree.print();
+        System.out.println("----------------------------------");
+        splayTree.delete(5);
+        splayTree.print();
+        System.out.println("----------------------------------");
+        splayTree.delete(6);
+        splayTree.print();
     }
 }
