@@ -2,6 +2,7 @@ package Main;
 
 import PerfectHashing.PerfectHashMap;
 import Trees.AbstractTree;
+import Trees.OptimalBST.OptimalBinarySearchTree;
 import Trees.OrderStatisticTree;
 import Trees.RedBlackTree;
 import Trees.SplayTree;
@@ -108,36 +109,6 @@ public class Main {
 //    }
 
 //    public static void main(String[] args) {
-//        OrderStatisticTree<Integer, String> orderStatisticTree = new OrderStatisticTree<>();
-//        orderStatisticTree.insert(87, null);
-//        orderStatisticTree.insert(3, null);
-//        orderStatisticTree.insert(67, null);
-//        orderStatisticTree.insert(11, null);
-//        orderStatisticTree.insert(56, "Hello");
-//        orderStatisticTree.insert(12, "Gotcha!");
-//        orderStatisticTree.insert(7, null);
-//        orderStatisticTree.insert(5, "Lol");
-//        orderStatisticTree.insert(1, null);
-//        orderStatisticTree.insert(77, null);
-//        orderStatisticTree.insert(9, null);
-//        orderStatisticTree.insert(45, null);
-//
-//        orderStatisticTree.print();
-//        System.out.println("______________________");
-//
-//        orderStatisticTree.delete(87);
-//        orderStatisticTree.delete(9);
-//        orderStatisticTree.delete(5);
-//        orderStatisticTree.delete(45);
-//        orderStatisticTree.print();
-//
-//        System.out.println("______________________");
-//
-//        System.out.println(orderStatisticTree.selectOST(orderStatisticTree.getRank(3)));
-//        System.out.println(orderStatisticTree.search(56));
-//    }
-
-//    public static void main(String[] args) {
 ////        Random random = new Random();
 ////        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
 ////        String[] disciplines = {"Programming", "Math", "English", "Ecology", "WEB", "Algorithms"};
@@ -168,43 +139,59 @@ public class Main {
 //        System.out.println(orderStatisticTree.selectOST(6));
 //    }
 
+//    public static void main(String[] args) {
+//        SplayTree<Integer, String> splayTree = new SplayTree<>();
+//
+//        splayTree.insert(5, null);
+//        splayTree.insert(6, null);
+//        splayTree.insert(7, "lol");
+//        splayTree.insert(8, null);
+//        splayTree.print();
+//        System.out.println("----------------------------------");
+//        splayTree.insert(1, null);
+//        splayTree.insert(45, "something");
+//        splayTree.insert(65, null);
+//        splayTree.print();
+//        System.out.println("----------------------------------");
+//        splayTree.insert(14, null);
+//        splayTree.insert(25, "hello");
+//        splayTree.insert(76, null);
+//        splayTree.insert(88, null);
+//
+//        String string = splayTree.search(25);
+//        splayTree.print();
+//        System.out.println("----------------------------------");
+//        splayTree.search(7);
+//        splayTree.print();
+//        System.out.println("----------------------------------");
+//        splayTree.search(14);
+//        splayTree.print();
+//        System.out.println("----------------------------------");
+//
+//
+//        splayTree.delete(25);
+//        splayTree.print();
+//        System.out.println("----------------------------------");
+//        splayTree.delete(5);
+//        splayTree.print();
+//        System.out.println("----------------------------------");
+//        splayTree.delete(6);
+//        splayTree.print();
+//    }
+
     public static void main(String[] args) {
-        SplayTree<Integer, String> splayTree = new SplayTree<>();
+        List<Pair<Integer, Integer>> list = new ArrayList<>();
+        list.add(new Pair<>(1, null));
+        list.add(new Pair<>(2, null));
+        list.add(new Pair<>(3, null));
+        list.add(new Pair<>(4, null));
+        list.add(new Pair<>(5, 123));
 
-        splayTree.insert(5, null);
-        splayTree.insert(6, null);
-        splayTree.insert(7, "lol");
-        splayTree.insert(8, null);
-        splayTree.print();
-        System.out.println("----------------------------------");
-        splayTree.insert(1, null);
-        splayTree.insert(45, "something");
-        splayTree.insert(65, null);
-        splayTree.print();
-        System.out.println("----------------------------------");
-        splayTree.insert(14, null);
-        splayTree.insert(25, "hello");
-        splayTree.insert(76, null);
-        splayTree.insert(88, null);
+        double[] p = {0.15, 0.1, 0.05, 0.1, 0.2};
+        double[] q = {0.05, 0.1, 0.05, 0.05, 0.05, 0.1};
 
-        String string = splayTree.search(25);
-        splayTree.print();
-        System.out.println("----------------------------------");
-        splayTree.search(7);
-        splayTree.print();
-        System.out.println("----------------------------------");
-        splayTree.search(14);
-        splayTree.print();
-        System.out.println("----------------------------------");
+        OptimalBinarySearchTree<Integer, Integer> optimalBinarySearchTree = new OptimalBinarySearchTree<>(list, p, q);
 
-
-        splayTree.delete(25);
-        splayTree.print();
-        System.out.println("----------------------------------");
-        splayTree.delete(5);
-        splayTree.print();
-        System.out.println("----------------------------------");
-        splayTree.delete(6);
-        splayTree.print();
+        optimalBinarySearchTree.print();
     }
 }
