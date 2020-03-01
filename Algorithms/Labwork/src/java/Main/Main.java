@@ -1,15 +1,6 @@
 package Main;
 
-import PerfectHashing.PerfectHashMap;
-import Trees.AbstractTree;
-import Trees.OptimalBST.OptimalBinarySearchTree;
-import Trees.OrderStatisticTree;
-import Trees.RedBlackTree;
-import Trees.SplayTree;
-import javafx.util.Pair;
-
-import java.security.SecureRandom;
-import java.util.*;
+import Heaps.FibonacciHeap;
 
 public class Main {
 
@@ -109,6 +100,13 @@ public class Main {
 //    }
 
 //    public static void main(String[] args) {
+////        DatabaseManager databaseManager = new JDBCDatabaseManager();
+////        try {
+////            databaseManager.connect("postgres", "password");
+////        } catch (SQLException e) {
+////            e.printStackTrace();
+////        }
+////
 ////        Random random = new Random();
 ////        String[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
 ////        String[] disciplines = {"Programming", "Math", "English", "Ecology", "WEB", "Algorithms"};
@@ -179,19 +177,45 @@ public class Main {
 //        splayTree.print();
 //    }
 
+//    public static void main(String[] args) {
+//        List<Pair<Integer, Integer>> list = new ArrayList<>();
+//        list.add(new Pair<>(1, null));
+//        list.add(new Pair<>(2, null));
+//        list.add(new Pair<>(3, null));
+//        list.add(new Pair<>(4, null));
+//        list.add(new Pair<>(5, 123));
+//
+//        double[] p = {0.15, 0.1, 0.05, 0.1, 0.2};
+//        double[] q = {0.05, 0.1, 0.05, 0.05, 0.05, 0.1};
+//
+//        OptimalBinarySearchTree<Integer, Integer> optimalBinarySearchTree = new OptimalBinarySearchTree<>(list, p, q);
+//
+//        optimalBinarySearchTree.print();
+//    }
+
     public static void main(String[] args) {
-        List<Pair<Integer, Integer>> list = new ArrayList<>();
-        list.add(new Pair<>(1, null));
-        list.add(new Pair<>(2, null));
-        list.add(new Pair<>(3, null));
-        list.add(new Pair<>(4, null));
-        list.add(new Pair<>(5, 123));
+        FibonacciHeap<Integer, String> heap = new FibonacciHeap<>(Integer.MIN_VALUE);
 
-        double[] p = {0.15, 0.1, 0.05, 0.1, 0.2};
-        double[] q = {0.05, 0.1, 0.05, 0.05, 0.05, 0.1};
+        heap.insert(45, "lol");
+        FibonacciHeap<Integer, String>.Node node = heap.insert(43, "lol");
+        heap.insert(56, "lol");
+        heap.insert(12, "lol");
+        heap.insert(90, "lol");
+        heap.insert(1, "lol");
+        heap.insert(5, "lol");
+        heap.insert(435, "lol");
+        heap.insert(87, "lol");
+        heap.insert(58, "lol");
+        heap.insert(2, "lol");
+        heap.insert(7, "lol");
+        heap.insert(123, "lol");
+        heap.insert(212, "lol");
+        heap.insert(122, "lol");
+        heap.insert(87, "lol");
+        heap.insert(92, "lol");
+        heap.insert(78, "lol");
 
-        OptimalBinarySearchTree<Integer, Integer> optimalBinarySearchTree = new OptimalBinarySearchTree<>(list, p, q);
-
-        optimalBinarySearchTree.print();
+        heap.delete(node);
+        System.out.println(heap.extractMin());
     }
 }
