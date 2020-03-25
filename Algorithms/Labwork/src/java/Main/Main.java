@@ -1,6 +1,12 @@
 package Main;
 
+import Heaps.AbstractHeap;
+import Heaps.BinomialHeap;
 import Heaps.FibonacciHeap;
+import Trees.BTree;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Main {
 
@@ -193,29 +199,82 @@ public class Main {
 //        optimalBinarySearchTree.print();
 //    }
 
+//    public static void main(String[] args) {
+//        AbstractHeap<Integer, String> heap = new FibonacciHeap<>(Integer.MIN_VALUE);
+//
+//        FibonacciHeap<Integer, String>.Node node1 = heap.insert(45, "lol");
+//        FibonacciHeap<Integer, String>.Node node2 = heap.insert(43, "lol");
+//        FibonacciHeap<Integer, String>.Node node3 = heap.insert(56, "lol");
+//        FibonacciHeap<Integer, String>.Node node4 = heap.insert(12, "lol");
+//        FibonacciHeap<Integer, String>.Node node5 = heap.insert(90, "lol");
+//        FibonacciHeap<Integer, String>.Node node6 = heap.insert(1, "lol");
+//        FibonacciHeap<Integer, String>.Node node7 = heap.insert(5, "lol");
+//        FibonacciHeap<Integer, String>.Node node8 = heap.insert(435, "lol");
+//        FibonacciHeap<Integer, String>.Node node9 = heap.insert(87, "lol");
+//        FibonacciHeap<Integer, String>.Node node10 = heap.insert(58, "lol");
+//        FibonacciHeap<Integer, String>.Node node11 = heap.insert(2, "lol");
+//        FibonacciHeap<Integer, String>.Node node12 = heap.insert(7, "lol");
+//        FibonacciHeap<Integer, String>.Node node13 = heap.insert(123, "lol");
+//        FibonacciHeap<Integer, String>.Node node14 = heap.insert(212, "lol");
+//        FibonacciHeap<Integer, String>.Node node15 = heap.insert(122, "lol");
+//        FibonacciHeap<Integer, String>.Node node16 = heap.insert(87, "lol");
+//        FibonacciHeap<Integer, String>.Node node17 = heap.insert(92, "lol");
+//        FibonacciHeap<Integer, String>.Node node18 = heap.insert(78, "lol");
+//
+////        heap.delete(node1);
+////        heap.delete(node2);
+////        heap.delete(node3);
+////        heap.delete(node4);
+////        heap.delete(node5);
+////        heap.delete(node6);
+////        heap.delete(node7);
+////        heap.delete(node8);
+////        heap.delete(node9);
+////        heap.delete(node10);
+////        heap.delete(node11);
+////        heap.delete(node12);
+////        heap.delete(node13);
+////        heap.delete(node14);
+////        heap.delete(node15);
+////        heap.delete(node16);
+////        heap.delete(node17);
+////        heap.delete(node18);
+//        System.out.println(heap.extractMin());
+//    }
+
     public static void main(String[] args) {
-        FibonacciHeap<Integer, String> heap = new FibonacciHeap<>(Integer.MIN_VALUE);
+        BTree<Integer, String> bTree = new BTree<>(3);
 
-        heap.insert(45, "lol");
-        FibonacciHeap<Integer, String>.Node node = heap.insert(43, "lol");
-        heap.insert(56, "lol");
-        heap.insert(12, "lol");
-        heap.insert(90, "lol");
-        heap.insert(1, "lol");
-        heap.insert(5, "lol");
-        heap.insert(435, "lol");
-        heap.insert(87, "lol");
-        heap.insert(58, "lol");
-        heap.insert(2, "lol");
-        heap.insert(7, "lol");
-        heap.insert(123, "lol");
-        heap.insert(212, "lol");
-        heap.insert(122, "lol");
-        heap.insert(87, "lol");
-        heap.insert(92, "lol");
-        heap.insert(78, "lol");
+//        for (int i = 50; i >= 0; i--) {
+//            bTree.insert(i, null);
+//        }
+//
+//        for (int i = 0; i < 51; i++) {
+//            bTree.delete(i);
+//            System.out.println(bTree);
+//        }
+//        bTree.delete(33);
+//        bTree.delete(24);
+//        bTree.delete(44);
 
-        heap.delete(node);
-        System.out.println(heap.extractMin());
+        bTree.insert(12, null);
+        bTree.insert(1, null);
+        bTree.insert(67, null);
+        bTree.insert(87, null);
+        bTree.insert(45, null);
+        bTree.insert(54, null);
+        bTree.insert(2, null);
+        bTree.insert(5, null);
+        bTree.insert(65, null);
+        bTree.insert(13, null);
+        bTree.insert(11, null);
+        bTree.insert(65, null);
+
+        bTree.delete(65);
+        bTree.delete(65);
+        bTree.delete(12);
+        bTree.delete(13);
+
+        System.out.println(bTree);
     }
 }
