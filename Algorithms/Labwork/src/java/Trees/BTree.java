@@ -3,14 +3,13 @@ package Trees;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.Objects;
 
 public class BTree<K extends Comparable<K>, V> {
 
     private Node root;
     private int t;
 
-    private class Node {
+    class Node {
         public int amountOfKeys;
         public boolean isLeaf;
         public List<SimpleEntry<K, V>> keys;
@@ -26,17 +25,21 @@ public class BTree<K extends Comparable<K>, V> {
 
     public BTree(int t) {
         this.root = new Node();
+        assert t > 1;
         this.t = t;
     }
 
-    public V search(K key) {
+    public SimpleEntry<K, V> search(K key) {
         SimpleEntry<Node, Integer> searchNode = searchBTree(root, key);
-        assert searchNode != null;
 
-        List<SimpleEntry<K, V>> keys = searchNode.getKey().keys;
-        Integer indexOfSearchKey = searchNode.getValue();
+        if (searchNode != null) {
+            List<SimpleEntry<K, V>> keys = searchNode.getKey().keys;
+            Integer indexOfSearchKey = searchNode.getValue();
 
-        return keys.get(indexOfSearchKey).getValue();
+            return keys.get(indexOfSearchKey);
+        } else {
+            return null;
+        }
     }
 
     public void insert(K key, V value) {
@@ -54,8 +57,8 @@ public class BTree<K extends Comparable<K>, V> {
         insertNonFull(root, insertEntry);
     }
 
-    public void delete(K key) {
-        deleteBTree(this.root, key);
+    public SimpleEntry<K, V> delete(K key) {
+        return deleteBTree(this.root, key);
     }
 
     private SimpleEntry<Node, Integer> searchBTree(Node root, K key) {
@@ -82,8 +85,12 @@ public class BTree<K extends Comparable<K>, V> {
                 i--;
             }
 
-            root.keys.add(i + 1, insertEntry);
-            root.amountOfKeys++;
+            if (i >= 0 && insertEntry.getKey().compareTo(root.keys.get(i).getKey()) == 0) {
+                root.keys.set(i, insertEntry);
+            } else {
+                root.keys.add(i + 1, insertEntry);
+                root.amountOfKeys++;
+            }
         } else {
             while (i >= 0 && insertEntry.getKey().compareTo(root.keys.get(i).getKey()) < 0) {
                 i--;
@@ -130,6 +137,10 @@ public class BTree<K extends Comparable<K>, V> {
     }
 
     private SimpleEntry<K, V> deleteBTree(Node node, K key) {
+        if (node == null) {
+            return null;
+        }
+
         int i = 0;
 
         while (i < node.amountOfKeys && node.keys.get(i).getKey().compareTo(key) < 0) {
@@ -167,15 +178,15 @@ public class BTree<K extends Comparable<K>, V> {
                             node.children.remove(i + 1);
                             node.amountOfKeys--;
 
-                            deleteBTree(previousChild, key);
+                            return deleteBTree(previousChild, key);
                         }
                     }
                 } else {
-                    deleteBTree(Objects.requireNonNull(descent(node, i)), key);
+                    return deleteBTree(descent(node, i), key);
                 }
             }
         } else {
-            deleteBTree(Objects.requireNonNull(descent(node, i)), key);
+            return deleteBTree(descent(node, i), key);
         }
 
         return null;
@@ -328,5 +339,13 @@ public class BTree<K extends Comparable<K>, V> {
                 }
             }
         }
+    }
+
+    Node getRoot() {
+        return root;
+    }
+
+    public int getT() {
+        return t;
     }
 }

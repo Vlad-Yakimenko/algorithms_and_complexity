@@ -7,6 +7,7 @@ import Trees.BTree;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 
 public class Main {
 
@@ -245,35 +246,42 @@ public class Main {
     public static void main(String[] args) {
         BTree<Integer, String> bTree = new BTree<>(3);
 
-//        for (int i = 50; i >= 0; i--) {
-//            bTree.insert(i, null);
-//        }
-//
+        for (int i = 50; i >= 0; i--) {
+            bTree.insert(i, null);
+        }
+
 //        for (int i = 0; i < 51; i++) {
 //            bTree.delete(i);
 //            System.out.println(bTree);
 //        }
-//        bTree.delete(33);
-//        bTree.delete(24);
-//        bTree.delete(44);
+        bTree.delete(33);
+        bTree.delete(24);
+        bTree.delete(44);
 
-        bTree.insert(12, null);
-        bTree.insert(1, null);
-        bTree.insert(67, null);
-        bTree.insert(87, null);
-        bTree.insert(45, null);
-        bTree.insert(54, null);
-        bTree.insert(2, null);
-        bTree.insert(5, null);
-        bTree.insert(65, null);
-        bTree.insert(13, null);
-        bTree.insert(11, null);
-        bTree.insert(65, null);
+//        bTree.insert(12, null);
+//        bTree.insert(1, null);
+//        bTree.insert(67, null);
+//        bTree.insert(87, null);
+//        bTree.insert(45, null);
+//        bTree.insert(54, null);
+//        bTree.insert(2, null);
+//        bTree.insert(5, null);
+//        bTree.insert(65, null);
+//        bTree.insert(13, null);
+//        bTree.insert(11, null);
+//        bTree.insert(65, null);
+//        bTree.insert(65, null);
+//        bTree.insert(65, null);
+//        bTree.insert(65, null);
+//        bTree.insert(65, null);
+//        bTree.insert(65, null);
+//        bTree.insert(65, null);
+//        bTree.insert(65, null);
 
-        bTree.delete(65);
-        bTree.delete(65);
-        bTree.delete(12);
-        bTree.delete(13);
+//        bTree.delete(65);
+//        bTree.delete(65);
+//        bTree.delete(12);
+//        bTree.delete(13);
 
         System.out.println(bTree);
     }
