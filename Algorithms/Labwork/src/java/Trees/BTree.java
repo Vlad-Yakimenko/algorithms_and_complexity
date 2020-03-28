@@ -79,12 +79,11 @@ public class BTree<K extends Comparable<K>, V> {
 
     private void insertNonFull(Node root, SimpleEntry<K, V> insertEntry) {
         int i = root.amountOfKeys - 1;
+        while (i >= 0 && insertEntry.getKey().compareTo(root.keys.get(i).getKey()) < 0) {
+            i--;
+        }
 
         if (root.isLeaf) {
-            while (i >= 0 && insertEntry.getKey().compareTo(root.keys.get(i).getKey()) < 0) {
-                i--;
-            }
-
             if (i >= 0 && insertEntry.getKey().compareTo(root.keys.get(i).getKey()) == 0) {
                 root.keys.set(i, insertEntry);
             } else {
@@ -92,9 +91,6 @@ public class BTree<K extends Comparable<K>, V> {
                 root.amountOfKeys++;
             }
         } else {
-            while (i >= 0 && insertEntry.getKey().compareTo(root.keys.get(i).getKey()) < 0) {
-                i--;
-            }
             i++;
 
             if (root.children.get(i).amountOfKeys == 2 * t - 1) {
@@ -136,57 +132,57 @@ public class BTree<K extends Comparable<K>, V> {
         root.amountOfKeys++;
     }
 
-    private SimpleEntry<K, V> deleteBTree(Node node, K key) {
-        if (node == null) {
+    private SimpleEntry<K, V> deleteBTree(Node root, K key) {
+        if (root == null) {
             return null;
         }
 
         int i = 0;
 
-        while (i < node.amountOfKeys && node.keys.get(i).getKey().compareTo(key) < 0) {
+        while (i < root.amountOfKeys && root.keys.get(i).getKey().compareTo(key) < 0) {
             i++;
         }
 
-        if (i < node.amountOfKeys) {
-            SimpleEntry<K, V> foundKey = node.keys.get(i);
+        if (i < root.amountOfKeys) {
+            SimpleEntry<K, V> foundKey = root.keys.get(i);
 
-            if (node.isLeaf && foundKey.getKey().compareTo(key) == 0) {
-                node.keys.remove(i);
-                node.amountOfKeys--;
+            if (root.isLeaf && foundKey.getKey().compareTo(key) == 0) {
+                root.keys.remove(i);
+                root.amountOfKeys--;
                 return foundKey;
-            } else if (!node.isLeaf) {
+            } else if (!root.isLeaf) {
                 if (foundKey.getKey().compareTo(key) == 0) {
-                    Node previousChild = node.children.get(i);
-                    SimpleEntry<K, V> deletedEntry = node.keys.get(i);
+                    Node previousChild = root.children.get(i);
+                    SimpleEntry<K, V> deletedEntry = root.keys.get(i);
 
                     if (previousChild.amountOfKeys >= t) {
-                        node.keys.set(i, getProxyForDelete(node, i, true));
+                        root.keys.set(i, getProxyForDelete(root, i, true));
                         return deletedEntry;
                     } else {
-                        Node nextChild = node.children.get(i + 1);
+                        Node nextChild = root.children.get(i + 1);
 
                         if (nextChild.amountOfKeys >= t) {
-                            node.keys.set(i, getProxyForDelete(node, i + 1, false));
+                            root.keys.set(i, getProxyForDelete(root, i + 1, false));
                             return deletedEntry;
                         } else {
 
-                            previousChild.keys.add(node.keys.get(i));
+                            previousChild.keys.add(root.keys.get(i));
                             previousChild.amountOfKeys++;
                             mergeNodes(previousChild, nextChild);
 
-                            node.keys.remove(i);
-                            node.children.remove(i + 1);
-                            node.amountOfKeys--;
+                            root.keys.remove(i);
+                            root.children.remove(i + 1);
+                            root.amountOfKeys--;
 
                             return deleteBTree(previousChild, key);
                         }
                     }
                 } else {
-                    return deleteBTree(descent(node, i), key);
+                    return deleteBTree(descent(root, i), key);
                 }
             }
         } else {
-            return deleteBTree(descent(node, i), key);
+            return deleteBTree(descent(root, i), key);
         }
 
         return null;
@@ -203,38 +199,38 @@ public class BTree<K extends Comparable<K>, V> {
         if (childByIndex.amountOfKeys >= t) {
             return childByIndex;
         } else if (index > 0 && children.get(index - 1).amountOfKeys >= t) {
-            Node childByPreviousIndex = children.get(index - 1);
+            Node previousChild = children.get(index - 1);
 
             if (!childByIndex.isLeaf) {
-                childByIndex.children.add(0, childByPreviousIndex.children.get(childByPreviousIndex.amountOfKeys));
-                childByPreviousIndex.children.remove(childByPreviousIndex.amountOfKeys);
+                childByIndex.children.add(0, previousChild.children.get(previousChild.amountOfKeys));
+                previousChild.children.remove(previousChild.amountOfKeys);
             }
 
             childByIndex.keys.add(0, node.keys.get(index - 1));
 
-            node.keys.set(index - 1, childByPreviousIndex.keys.get(childByPreviousIndex.amountOfKeys - 1));
-            childByPreviousIndex.keys.remove(childByPreviousIndex.amountOfKeys - 1);
+            node.keys.set(index - 1, previousChild.keys.get(previousChild.amountOfKeys - 1));
+            previousChild.keys.remove(previousChild.amountOfKeys - 1);
 
             childByIndex.amountOfKeys++;
-            childByPreviousIndex.amountOfKeys--;
+            previousChild.amountOfKeys--;
 
             return childByIndex;
 
         } else if (index < node.amountOfKeys && children.get(index + 1).amountOfKeys >= t) {
-            Node childByNextIndex = children.get(index + 1);
+            Node nextChild = children.get(index + 1);
 
             childByIndex.keys.add(node.keys.get(index));
-            node.keys.set(index, childByNextIndex.keys.get(0));
+            node.keys.set(index, nextChild.keys.get(0));
 
             if (!childByIndex.isLeaf) {
-                childByIndex.children.add(childByNextIndex.children.get(0));
-                childByNextIndex.children.remove(0);
+                childByIndex.children.add(nextChild.children.get(0));
+                nextChild.children.remove(0);
             }
 
-            childByNextIndex.keys.remove(0);
+            nextChild.keys.remove(0);
 
             childByIndex.amountOfKeys++;
-            childByNextIndex.amountOfKeys--;
+            nextChild.amountOfKeys--;
 
             return childByIndex;
 
