@@ -131,7 +131,6 @@ public class BTreeTest {
         }
     }
 
-//    @Ignore
     @Test
     public void bigDataTest() {
         int i;
