@@ -2,7 +2,6 @@ package Trees;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.AbstractMap;
@@ -301,15 +300,15 @@ public class BTreeTest {
         boolean isCorrect = true;
 
         for (int i = 0; i < node.children.size(); i++) {
-            isCorrect = checkTreeProperties(node.children.get(i)) & isCorrect;
+            isCorrect &= checkTreeProperties(node.children.get(i));
         }
 
-        isCorrect &= checkNodeWithChildren(node);
+        isCorrect &= checkNode(node);
 
         return isCorrect;
     }
 
-    private <K extends Comparable<K>, V> boolean checkNodeWithChildren(BTree<K, V>.Node node) throws Exception {
+    private <K extends Comparable<K>, V> boolean checkNode(BTree<K, V>.Node node) throws Exception {
         boolean isCorrect = true;
 
         if (node.keys.size() != node.amountOfKeys) {
