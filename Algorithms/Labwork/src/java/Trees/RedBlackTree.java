@@ -72,7 +72,13 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
 
     @Override
     public V search(K key) {
-        return searchNode(this.root, key).getValue();
+        Node searchNode = searchNode(this.root, key);
+
+        if (searchNode != null) {
+            return searchNode.getValue();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -80,28 +86,28 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         insertAlgorithm(new RBNode(key, value));
     }
 
-    @SuppressWarnings("SuspiciousNameCombination, unchecked")
+    @SuppressWarnings("unchecked")
     protected <T extends RBNode> void insertAlgorithm(T insertedNode) {
-        T x = (T) insertedNode.getRoot(), y = (T) NIL;
+        T currentNode = (T) insertedNode.getRoot(), previousNode = (T) NIL;
 
-        while (x != NIL) {
-            y = x;
+        while (currentNode != NIL) {
+            previousNode = currentNode;
 
-            if (insertedNode.getKey().compareTo(x.getKey()) < 0) {
-                x = (T) x.getLeft();
+            if (insertedNode.getKey().compareTo(currentNode.getKey()) < 0) {
+                currentNode = (T) currentNode.getLeft();
             } else {
-                x = (T) x.getRight();
+                currentNode = (T) currentNode.getRight();
             }
         }
 
-        insertedNode.setParent(y);
+        insertedNode.setParent(previousNode);
 
-        if (y == NIL) {
+        if (previousNode == NIL) {
             insertedNode.setRoot(insertedNode);
-        } else if (insertedNode.getKey().compareTo(y.getKey()) < 0) {
-            y.setLeft(insertedNode);
+        } else if (insertedNode.getKey().compareTo(previousNode.getKey()) < 0) {
+            previousNode.setLeft(insertedNode);
         } else {
-            y.setRight(insertedNode);
+            previousNode.setRight(insertedNode);
         }
 
         insertedNode.setLeft(NIL);
@@ -159,8 +165,15 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
     }
 
     @Override
-    public void delete(K key) {
-        deleteAlgorithm(searchNode((RBNode) this.root, key));
+    public V delete(K key) {
+        RBNode deletedNode = searchNode((RBNode) this.root, key);
+
+        if (deletedNode != null) {
+            deleteAlgorithm(deletedNode);
+            return deletedNode.getValue();
+        } else {
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -168,9 +181,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
         T x, y;
         boolean yOriginalColor;
 
-        if (deletedNode == null) {
-            throw new IllegalArgumentException("This node doesn't exist!");
-        } else {
+        if (deletedNode != null) {
             y = deletedNode;
             yOriginalColor = y.getColor();
 
@@ -298,20 +309,20 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V>
     }
 
     @Override
-    public void print() {
-        redBlackTreePrintMethod((RBNode) this.root, 0);
+    public String toString() {
+        StringBuilder treeImagination = new StringBuilder();
+        print(treeImagination, (RBNode) this.root, 0);
+        return treeImagination.toString();
     }
 
-    private void redBlackTreePrintMethod(RedBlackTree<? extends Comparable<?>, ?>.RBNode node, int n) {
+    private void print(StringBuilder treeImagination, RedBlackTree<? extends Comparable<?>, ?>.RBNode node, int n) {
         if (node != null) {
-            redBlackTreePrintMethod(node.right, n + 10);
+            print(treeImagination, node.right, n + 10);
 
-            for (int i = 0; i < n; i++) {
-                System.out.print(" ");
-            }
-            System.out.println("" + node.getKey() + "=" + node.getColor());
+            treeImagination.append('\n').append(" ".repeat(Math.max(0, n)));
+            treeImagination.append(node.getKey()).append('=').append(node.getColor());
 
-            redBlackTreePrintMethod(node.left, n + 10);
+            print(treeImagination, node.left, n + 10);
         }
     }
 }

@@ -56,11 +56,11 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
         }
     }
 
-    public abstract V search(K value);
+    public abstract V search(K key);
 
     public abstract void insert(K key, V value);
 
-    public abstract void delete(K key);
+    public abstract V delete(K key);
 
     @SuppressWarnings("unchecked")
     protected <T extends Node> T searchNode(T root, K key)  {
@@ -88,50 +88,50 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
         return root;
     }
 
-    @SuppressWarnings("SuspiciousNameCombination, unchecked")
-    protected <T extends Node> void leftRotate(T x) {
-        T y = (T) x.getRight();
-        x.setRight(y.getLeft());
+    @SuppressWarnings("unchecked")
+    protected <T extends Node> void leftRotate(T root) {
+        T newRoot = (T) root.getRight();
+        root.setRight(newRoot.getLeft());
 
-        if (y.getLeft() != NIL) {
-            y.getLeft().setParent(x);
+        if (newRoot.getLeft() != NIL) {
+            newRoot.getLeft().setParent(root);
         }
 
-        y.setParent(x.getParent());
+        newRoot.setParent(root.getParent());
 
-        if (x.getParent() == NIL) {
-            x.setRoot(y);
-        } else if (x == x.getParent().getLeft()) {
-            x.getParent().setLeft(y);
+        if (root.getParent() == NIL) {
+            root.setRoot(newRoot);
+        } else if (root == root.getParent().getLeft()) {
+            root.getParent().setLeft(newRoot);
         } else {
-            x.getParent().setRight(y);
+            root.getParent().setRight(newRoot);
         }
 
-        y.setLeft(x);
-        x.setParent(y);
+        newRoot.setLeft(root);
+        root.setParent(newRoot);
     }
 
-    @SuppressWarnings("SuspiciousNameCombination, unchecked")
-    protected <T extends Node> void rightRotate(T y) {
-        T x = (T) y.getLeft();
-        y.setLeft(x.getRight());
+    @SuppressWarnings("unchecked")
+    protected <T extends Node> void rightRotate(T root) {
+        T newRoot = (T) root.getLeft();
+        root.setLeft(newRoot.getRight());
 
-        if (x.getRight() != NIL) {
-            x.getRight().setParent(y);
+        if (newRoot.getRight() != NIL) {
+            newRoot.getRight().setParent(root);
         }
 
-        x.setParent(y.getParent());
+        newRoot.setParent(root.getParent());
 
-        if (y.getParent() == NIL) {
-            y.setRoot(x);
-        } else if (y == y.getParent().getRight()) {
-            y.getParent().setRight(x);
+        if (root.getParent() == NIL) {
+            root.setRoot(newRoot);
+        } else if (root == root.getParent().getRight()) {
+            root.getParent().setRight(newRoot);
         } else {
-            y.getParent().setLeft(x);
+            root.getParent().setLeft(newRoot);
         }
 
-        x.setRight(y);
-        y.setParent(x);
+        newRoot.setRight(root);
+        root.setParent(newRoot);
     }
 
     protected <T extends Node> void transplant(T first, T second) {

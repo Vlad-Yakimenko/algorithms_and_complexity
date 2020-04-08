@@ -35,7 +35,7 @@ public class OptimalBinarySearchTree<K extends Comparable<K>, V> extends Abstrac
     }
 
     @Override
-    public void delete(K key) {
+    public V delete(K key) {
         throw new UnsupportedOperationException("You can't delete values from static set.");
     }
 

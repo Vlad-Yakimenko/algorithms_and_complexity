@@ -49,7 +49,7 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
     }
 
     @Override
-    public void delete(K key) {
+    public V delete(K key) {
         Node removeElement = searchNode(this.root, key);
 
         if (removeElement != null) {
@@ -75,6 +75,12 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
 
                 splay(newLocalRoot);
             }
+        }
+
+        if (removeElement != null) {
+            return removeElement.getValue();
+        } else {
+            return null;
         }
     }
 
