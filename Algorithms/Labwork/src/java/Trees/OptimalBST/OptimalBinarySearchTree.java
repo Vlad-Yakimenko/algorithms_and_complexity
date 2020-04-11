@@ -26,12 +26,12 @@ public class OptimalBinarySearchTree<K extends Comparable<K>, V> extends Abstrac
 
     @Override
     public void insert(K key, V value) {
-        throw new UnsupportedOperationException("You can't insert new values in static set.");
+        throw new UnsupportedOperationException("You can't insert new values in immutable set.");
     }
 
     @Override
     public V delete(K key) {
-        throw new UnsupportedOperationException("You can't delete values from static set.");
+        throw new UnsupportedOperationException("You can't delete values from immutable set.");
     }
 
     private int[][] optimalBST() {
