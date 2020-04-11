@@ -66,17 +66,6 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
     }
 
     @Override
-    public V search(K key) {
-        Node searchNode = searchNode(this.root, key);
-
-        if (searchNode != null) {
-            return searchNode.getValue();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public void insert(K key, V value) {
         RBNode searchNode = (RBNode) searchNode(this.root, key);
 
@@ -313,7 +302,6 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         } else {
             replacedNode.getParent().setRight(proxy);
         }
-
         proxy.setParent(replacedNode.getParent());
     }
 

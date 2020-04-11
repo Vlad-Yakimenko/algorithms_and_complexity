@@ -1,6 +1,6 @@
 package Trees;
 
-public class SplayTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
+public class SplayTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K, V> {
 
     public SplayTree() {
         this.root = null;
@@ -8,41 +8,28 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
     }
 
     @Override
-    public V search(K key) {
-        Node temp = searchNode(this.root, key);
-
-        if (temp == null) {
-            throw new IllegalArgumentException("This key doesn't exist!");
-        } else {
-            splay(temp);
-            return temp.getValue();
-        }
-    }
-
-    @Override
     public void insert(K key, V value) {
-        Node preInsertPlace = null;
-        Node insertPlace = root;
+        Node currentNode = this.root, previous = null;
 
-        while (insertPlace != null) {
-            preInsertPlace = insertPlace;
+        while (currentNode != null) {
+            previous = currentNode;
 
-            if (insertPlace.getKey().compareTo(key) < 0) {
-                insertPlace = insertPlace.getRight();
+            if (currentNode.getKey().compareTo(key) < 0) {
+                currentNode = currentNode.getRight();
             } else {
-                insertPlace = insertPlace.getLeft();
+                currentNode = currentNode.getLeft();
             }
         }
 
         Node insertElement = new Node(key, value);
-        insertElement.setParent(preInsertPlace);
+        insertElement.setParent(previous);
 
-        if (preInsertPlace == null) {
-            root = insertElement;
-        } else if (preInsertPlace.getKey().compareTo(insertElement.getKey()) < 0) {
-            preInsertPlace.setRight(insertElement);
+        if (previous == null) {
+            this.root = insertElement;
+        } else if (previous.getKey().compareTo(insertElement.getKey()) < 0) {
+            previous.setRight(insertElement);
         } else {
-            preInsertPlace.setLeft(insertElement);
+            previous.setLeft(insertElement);
         }
 
         splay(insertElement);
@@ -50,43 +37,38 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
 
     @Override
     public V delete(K key) {
-        Node removeElement = searchNode(this.root, key);
+        Node deletedNode = searchNode(this.root, key);
 
-        if (removeElement != null) {
-            if (removeElement.getRight() == null)
-                transplant(removeElement, removeElement.getLeft());
-            else if (removeElement.getLeft() == null)
-                transplant(removeElement, removeElement.getRight());
+        if (deletedNode != null) {
+            if (deletedNode.getRight() == null)
+                transplant(deletedNode, deletedNode.getLeft());
+            else if (deletedNode.getLeft() == null)
+                transplant(deletedNode, deletedNode.getRight());
             else {
-                Node newLocalRoot = treeMinimum(removeElement.getRight());
+                Node newLocalRoot = treeMinimum(deletedNode.getRight());
 
-                if (newLocalRoot.getParent() != removeElement) {
-
+                if (newLocalRoot.getParent() != deletedNode) {
                     transplant(newLocalRoot, newLocalRoot.getRight());
-
-                    newLocalRoot.setRight(removeElement.getRight());
+                    newLocalRoot.setRight(deletedNode.getRight());
                     newLocalRoot.getRight().setParent(newLocalRoot);
                 }
 
-                transplant(removeElement, newLocalRoot);
-
-                newLocalRoot.setLeft(removeElement.getLeft());
+                transplant(deletedNode, newLocalRoot);
+                newLocalRoot.setLeft(deletedNode.getLeft());
                 newLocalRoot.getLeft().setParent(newLocalRoot);
 
                 splay(newLocalRoot);
             }
+
+            return deletedNode.getValue();
         }
 
-        if (removeElement != null) {
-            return removeElement.getValue();
-        } else {
-            return null;
-        }
+        return null;
     }
 
     private void splay(Node node) {
-        while (node != root) {
-            if (node.getParent() == root) {
+        while (node != this.root) {
+            if (node.getParent() == this.root) {
                 if (node == node.getParent().getLeft())
                     rightRotate(node.getParent());
                 else if (node == node.getParent().getRight()) {
@@ -122,20 +104,20 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
     }
 
     @Override
-    public void print() {
-        splayTreePrintMethod(this.root, 0);
+    public String toString() {
+        StringBuilder treeImagination = new StringBuilder();
+        print(treeImagination, this.root, 0);
+        return treeImagination.toString();
     }
 
-    private void splayTreePrintMethod(Node node, int n) {
-        if (node != this.NIL) {
-            splayTreePrintMethod(node.getRight(), n + 10);
+    public void print(StringBuilder treeImagination, Node node, int n) {
+        if (node != null) {
+            print(treeImagination, node.getRight(), n + 10);
 
-            for (int i = 0; i < n; i++) {
-                System.out.print(" ");
-            }
-            System.out.println("" + node.getKey() + node.getValue());
+            treeImagination.append('\n').append(" ".repeat(Math.max(0, n)));
+            treeImagination.append(node);
 
-            splayTreePrintMethod(node.getLeft(), n + 10);
+            print(treeImagination, node.getLeft(), n + 10);
         }
     }
 }

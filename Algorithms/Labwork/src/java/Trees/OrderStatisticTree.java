@@ -66,17 +66,6 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     @Override
-    public V search(K key) {
-        Node searchNode = searchNode(this.root, key);
-
-        if (searchNode != null) {
-            return searchNode.getValue();
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public void insert(K key, V value) {
         OSNode searchNode = (OSNode) searchNode(this.root, key);
 

@@ -57,7 +57,15 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> {
         }
     }
 
-    public abstract V search(K key);
+    public V search(K key) {
+        Node searchNode = searchNode(this.root, key);
+
+        if (searchNode != null) {
+            return searchNode.getValue();
+        } else {
+            return null;
+        }
+    }
 
     public abstract void insert(K key, V value);
 
