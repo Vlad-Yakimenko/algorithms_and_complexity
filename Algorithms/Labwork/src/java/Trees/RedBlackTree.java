@@ -302,24 +302,14 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         } else {
             replacedNode.getParent().setRight(proxy);
         }
+
         proxy.setParent(replacedNode.getParent());
     }
 
     @Override
     public String toString() {
         StringBuilder treeImagination = new StringBuilder();
-        print(treeImagination, (RBNode) this.root, 0);
+        print(treeImagination, this.root, 0);
         return treeImagination.toString();
-    }
-
-    private void print(StringBuilder treeImagination, RBNode node, int n) {
-        if (node != null) {
-            print(treeImagination, node.right, n + 10);
-
-            treeImagination.append('\n').append(" ".repeat(Math.max(0, n)));
-            treeImagination.append(node);
-
-            print(treeImagination, node.left, n + 10);
-        }
     }
 }

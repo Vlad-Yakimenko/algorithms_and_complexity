@@ -161,13 +161,13 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> {
     }
 
     public void print(StringBuilder treeImagination, Node node, int n) {
-        if (node != null) {
-            print(treeImagination, node.right, n + 10);
+        if (node != this.NIL) {
+            print(treeImagination, node.getRight(), n + 10);
 
             treeImagination.append('\n').append(" ".repeat(Math.max(0, n)));
             treeImagination.append(node);
 
-            print(treeImagination, node.left, n + 10);
+            print(treeImagination, node.getLeft(), n + 10);
         }
     }
 }

@@ -223,25 +223,13 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
             root.decrementSize();
             root = root.getLeft();
         }
-
         return root;
     }
 
     @Override
     public String toString() {
         StringBuilder treeImagination = new StringBuilder();
-        print(treeImagination, (OSNode) this.root, 0);
+        print(treeImagination, this.root, 0);
         return treeImagination.toString();
-    }
-
-    private void print(StringBuilder treeImagination, OSNode node, int n) {
-        if (node != this.NIL) {
-            print(treeImagination, node.right, n + 10);
-
-            treeImagination.append('\n').append(" ".repeat(Math.max(0, n)));
-            treeImagination.append(node);
-
-            print(treeImagination, node.left, n + 10);
-        }
     }
 }
