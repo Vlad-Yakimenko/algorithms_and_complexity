@@ -3,12 +3,16 @@ package Trees;
 public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree<K, V> {
 
     class OSNode extends RBNode {
-        int size;
+        private int size;
         private OSNode parent, left, right;
 
         public OSNode(K key, V value) {
             super(key, value);
             parent = left = right = (OSNode) NIL;
+        }
+
+        public int getSize() {
+            return size;
         }
 
         public void incrementSize() {
@@ -50,18 +54,8 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
         }
 
         @Override
-        Node getRoot() {
-            return root;
-        }
-
-        @Override
-        void setRoot(Node newRoot) {
-            root = newRoot;
-        }
-
-        @Override
         public String toString() {
-            return "" + this.getKey() + "=size:" + this.size;
+            return this.getKey() + "=size:" + this.getSize();
         }
     }
 
@@ -73,7 +67,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
     @Override
     public V search(K key) {
-        OSNode searchNode = searchNode((OSNode) this.root, key);
+        Node searchNode = searchNode(this.root, key);
 
         if (searchNode != null) {
             return searchNode.getValue();
@@ -84,75 +78,68 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
     @Override
     public void insert(K key, V value) {
-        OSNode node = new OSNode(key, value);
-        node.incrementSize();
-        increaseSizes(key);
+        OSNode searchNode = (OSNode) searchNode(this.root, key);
 
-        insertAlgorithm(node);
+        if (searchNode == null) {
+            OSNode node = new OSNode(key, value);
+            node.incrementSize();
+            increaseSizes(key);
+            insertRBNode(node);
+        } else {
+            searchNode.setValue(value);
+        }
     }
 
     @Override
     public V delete(K key) {
-        OSNode deletedNode = searchNode((OSNode) this.root, key);
+        OSNode deletedNode = (OSNode) searchNode(this.root, key);
 
         if (deletedNode != null) {
             decreaseSizes(key);
-            deleteAlgorithmOS(deletedNode);
+            deleteOSNode(deletedNode);
             return deletedNode.getValue();
         } else {
             return null;
         }
     }
 
-    protected void deleteAlgorithmOS(OSNode deletedNode) {
-        OSNode x, y;
-        boolean yOriginalColor;
+    protected void deleteOSNode(OSNode deletedNode) {
+        OSNode suspect, suspectsProxy;
+        boolean suspectsOriginalColor;
 
         if (deletedNode != null) {
-            y = deletedNode;
-            yOriginalColor = y.getColor();
+            suspect = deletedNode;
+            suspectsOriginalColor = suspect.getColor();
 
             if (deletedNode.getLeft() == NIL) {
-                x = deletedNode.getRight();
-                RBTreeTransplant(deletedNode, deletedNode.getRight());
+                suspectsProxy = deletedNode.getRight();
+                transplantRBTree(deletedNode, deletedNode.getRight());
 
-                if (x != NIL) {
-                    x.size = x.left.size + x.right.size + 1;
+                if (suspectsProxy != NIL) {
+                    suspectsProxy.size = suspectsProxy.left.size + suspectsProxy.right.size + 1;
                 }
             } else if (deletedNode.getRight() == NIL) {
-                x = deletedNode.getLeft();
-                RBTreeTransplant(deletedNode, deletedNode.getLeft());
+                suspectsProxy = deletedNode.getLeft();
+                transplantRBTree(deletedNode, deletedNode.getLeft());
 
-                if (x != NIL) {
-                    x.size = x.left.size + x.right.size + 1;
+                if (suspectsProxy != NIL) {
+                    suspectsProxy.size = suspectsProxy.left.size + suspectsProxy.right.size + 1;
                 }
             } else {
-                y = treeMinimumOS(deletedNode.getRight());
-                yOriginalColor = y.getColor();
-                x = y.getRight();
-
-                if (y.getParent() != deletedNode) {
-                    RBTreeTransplant(y, y.getRight());
-                    y.setRight(deletedNode.getRight());
-                    y.getRight().setParent(y);
-                } else {
-                    x.setParent(y);
-                }
-
-                RBTreeTransplant(deletedNode, y);
-                y.setLeft(deletedNode.getLeft());
-                y.getLeft().setParent(y);
-                y.size = y.left.size + y.right.size + 1;
+                suspect = treeMinimumOS(deletedNode.getRight());
+                suspectsOriginalColor = suspect.getColor();
+                suspectsProxy = (OSNode) replaceDeletedNode(deletedNode, suspect);
+                suspect.size = suspect.left.size + suspect.right.size + 1;
 
                 if (deletedNode.getColor()) {
-                    y.setColorBlack();
+                    suspect.setColorBlack();
                 } else {
-                    y.setColorRed();
+                    suspect.setColorRed();
                 }
             }
 
-            if (yOriginalColor) {
-                deleteFixup((OSNode) deletedNode.getRoot(), x);
+            if (suspectsOriginalColor) {
+                deleteFixup(suspectsProxy);
             }
         }
     }
@@ -166,8 +153,8 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     private OSNode recursiveSelect(OSNode root, int rank) {
-        if (root != null && root.left != null) {
-            int temp = root.left.size + 1;
+        if (root != null && root.getLeft() != null) {
+            int temp = root.getLeft().getSize() + 1;
 
             if (rank == temp) {
                 return root;
@@ -182,14 +169,14 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     public int getRank(K key) {
-        OSNode node = searchNode((OSNode) this.root, key);
+        OSNode node = (OSNode) searchNode(this.root, key);
 
         if (node != null) {
-            int rank = node.getLeft().size + 1;
+            int rank = node.getLeft().getSize() + 1;
 
             while (node != this.root) {
                 if (node == node.getParent().getRight()) {
-                    rank += node.getParent().getLeft().size + 1;
+                    rank += node.getParent().getLeft().getSize() + 1;
                 }
 
                 node = node.getParent();
@@ -221,8 +208,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected <T extends Node> void leftRotate(T root) {
+    protected void leftRotate(Node root) {
         OSNode temp = (OSNode) root;
         OSNode newRoot = temp.getRight();
 
@@ -233,8 +219,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected <T extends Node> void rightRotate(T root) {
+    protected void rightRotate(Node root) {
         OSNode temp = (OSNode) root;
         OSNode newRoot = temp.getLeft();
 
@@ -260,12 +245,12 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
         return treeImagination.toString();
     }
 
-    private void print(StringBuilder treeImagination, OrderStatisticTree<? extends Comparable<?>, ?>.OSNode node, int n) {
+    private void print(StringBuilder treeImagination, OSNode node, int n) {
         if (node != this.NIL) {
             print(treeImagination, node.right, n + 10);
 
             treeImagination.append('\n').append(" ".repeat(Math.max(0, n)));
-            treeImagination.append(node.getKey()).append("=size:").append(node.size);
+            treeImagination.append(node);
 
             print(treeImagination, node.left, n + 10);
         }

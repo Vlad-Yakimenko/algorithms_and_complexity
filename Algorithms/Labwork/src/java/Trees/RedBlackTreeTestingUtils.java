@@ -44,7 +44,7 @@ public class RedBlackTreeTestingUtils<K extends Comparable<K>, V> {
         if (tree instanceof OrderStatisticTree) {
             OrderStatisticTree<K, V>.OSNode temp = (OrderStatisticTree<K, V>.OSNode) node;
 
-            if (temp.size != temp.getLeft().size + temp.getRight().size + 1) {
+            if (temp.getSize() != temp.getLeft().getSize() + temp.getRight().getSize() + 1) {
                 isCorrect = false;
             }
         }

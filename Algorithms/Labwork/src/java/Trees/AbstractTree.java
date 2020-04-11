@@ -23,6 +23,10 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
             return this.value;
         }
 
+        public void setValue(V newValue) {
+            this.value = newValue;
+        }
+
         public Node getParent() {
             return parent;
         }
@@ -47,12 +51,9 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
             this.right = right;
         }
 
-        Node getRoot() {
-            return root;
-        }
-
-        void setRoot(Node newRoot) {
-            root = newRoot;
+        @Override
+        public String toString() {
+            return String.valueOf(this.getKey());
         }
     }
 
@@ -62,35 +63,24 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
 
     public abstract V delete(K key);
 
-    @SuppressWarnings("unchecked")
-    protected <T extends Node> T searchNode(T root, K key)  {
-        T temp = root;
+    protected Node searchNode(Node root, K key)  {
+        Node temp = root;
 
         while (temp != NIL) {
             if (temp.getKey().equals(key)) {
                 return temp;
             } else if (temp.getKey().compareTo(key) < 0) {
-                temp = (T) temp.getRight();
+                temp = temp.getRight();
             } else {
-                temp = (T) temp.getLeft();
+                temp = temp.getLeft();
             }
         }
 
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T extends Node> T treeMinimum(T root) {
-        while (root.getLeft() != NIL) {
-            root = (T) root.getLeft();
-        }
-
-        return root;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T extends Node> void leftRotate(T root) {
-        T newRoot = (T) root.getRight();
+    protected void leftRotate(Node root) {
+        Node newRoot = root.getRight();
         root.setRight(newRoot.getLeft());
 
         if (newRoot.getLeft() != NIL) {
@@ -100,7 +90,7 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
         newRoot.setParent(root.getParent());
 
         if (root.getParent() == NIL) {
-            root.setRoot(newRoot);
+            this.root = newRoot;
         } else if (root == root.getParent().getLeft()) {
             root.getParent().setLeft(newRoot);
         } else {
@@ -111,9 +101,8 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
         root.setParent(newRoot);
     }
 
-    @SuppressWarnings("unchecked")
-    protected <T extends Node> void rightRotate(T root) {
-        T newRoot = (T) root.getLeft();
+    protected void rightRotate(Node root) {
+        Node newRoot = root.getLeft();
         root.setLeft(newRoot.getRight());
 
         if (newRoot.getRight() != NIL) {
@@ -123,7 +112,7 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
         newRoot.setParent(root.getParent());
 
         if (root.getParent() == NIL) {
-            root.setRoot(newRoot);
+            this.root = newRoot;
         } else if (root == root.getParent().getRight()) {
             root.getParent().setRight(newRoot);
         } else {
@@ -134,32 +123,43 @@ public abstract class AbstractTree<K extends Comparable<K>, V> {
         root.setParent(newRoot);
     }
 
-    protected <T extends Node> void transplant(T first, T second) {
-        if (first.getParent() == null)
-            this.root = second;
-        else if (first == first.getParent().getLeft())
-            first.getParent().setLeft(second);
-        else
-            first.getParent().setRight(second);
+    protected Node treeMinimum(Node root) {
+        while (root.getLeft() != NIL) {
+            root = root.getLeft();
+        }
 
-        if (second != null)
-            second.setParent(first.getParent());
+        return root;
     }
 
-    public void print() {
-        AbstractTreePrintMethod(this.root, 0);
+    protected void transplant(Node replacedNode, Node proxy) {
+        if (replacedNode.getParent() == null) {
+            this.root = proxy;
+        } else if (replacedNode == replacedNode.getParent().getLeft()) {
+            replacedNode.getParent().setLeft(proxy);
+        } else {
+            replacedNode.getParent().setRight(proxy);
+        }
+
+        if (proxy != null) {
+            proxy.setParent(replacedNode.getParent());
+        }
     }
 
-    private void AbstractTreePrintMethod(AbstractTree<? extends Comparable<?>, ?>.Node node, int n) {
+    @Override
+    public String toString() {
+        StringBuilder treeImagination = new StringBuilder();
+        print(treeImagination, this.root, 0);
+        return treeImagination.toString();
+    }
+
+    public void print(StringBuilder treeImagination, Node node, int n) {
         if (node != null) {
-            AbstractTreePrintMethod(node.right, n + 10);
+            print(treeImagination, node.right, n + 10);
 
-            for (int i = 0; i < n; i++) {
-                System.out.print(" ");
-            }
-            System.out.println(node.getKey());
+            treeImagination.append('\n').append(" ".repeat(Math.max(0, n)));
+            treeImagination.append(node);
 
-            AbstractTreePrintMethod(node.left, n + 10);
+            print(treeImagination, node.left, n + 10);
         }
     }
 }
