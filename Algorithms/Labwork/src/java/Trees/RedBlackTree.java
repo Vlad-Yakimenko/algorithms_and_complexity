@@ -1,6 +1,6 @@
 package Trees;
 
-public class RedBlackTree<K extends Comparable<K>, V> extends AbstractTree<K, V> {
+public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K, V> {
 
     protected class RBNode extends Node {
         private boolean color;

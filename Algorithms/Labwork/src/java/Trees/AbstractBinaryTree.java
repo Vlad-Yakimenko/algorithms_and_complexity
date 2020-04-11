@@ -1,12 +1,12 @@
 package Trees;
 
-public abstract class AbstractTree<K extends Comparable<K>, V> {
+public abstract class AbstractBinaryTree<K extends Comparable<K>, V> {
 
     protected Node root;
     protected Node NIL;
 
     protected class Node {
-        private K key;
+        private final K key;
         private V value;
         private Node parent, left, right;
 
