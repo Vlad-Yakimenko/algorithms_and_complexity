@@ -109,12 +109,13 @@ public class PersistentRedBlackTree<K extends Comparable<K>, V> extends RedBlack
 
     @Override
     public V delete(K key) {
-        if (searchNode(getRoot(), key) != null) {
-            RBNode deletedNode = (RBNode) searchNodeWithCopying(getRoot(), key);
+        RBNode deletedNode = (RBNode) searchNodeWithCopying(getRoot(), key);
+
+        if (deletedNode != null) {
             deleteRBNode(deletedNode);
-            assert deletedNode != null;
             return deletedNode.getValue();
         } else {
+            this.undo();
             return null;
         }
     }
@@ -268,12 +269,24 @@ public class PersistentRedBlackTree<K extends Comparable<K>, V> extends RedBlack
     }
 
     public void undo() {
-        roots.remove(roots.size() - 1);
+        if (roots.size() > 0) {
+            roots.remove(roots.size() - 1);
+        } else {
+            throw new IllegalCallerException("Do operation before call undo()!");
+        }
+    }
+
+    public void clear() {
+        roots.clear();
     }
 
     @Override
     protected Node getRoot() {
-        return this.roots.get(this.roots.size() - 1);
+        if (roots.size() > 0) {
+            return this.roots.get(this.roots.size() - 1);
+        } else {
+            return this.NIL;
+        }
     }
 
     @Override
