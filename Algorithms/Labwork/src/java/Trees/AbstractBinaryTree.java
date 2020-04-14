@@ -62,7 +62,7 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements 
     }
 
     public V search(K key) {
-        Node searchNode = searchNode(this.root, key);
+        Node searchNode = searchNode(this.getRoot(), key);
 
         if (searchNode != null) {
             return searchNode.getValue();
@@ -76,7 +76,7 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements 
     public abstract V delete(K key);
 
     public Iterator<SimpleEntry<K, V>> iterator() {
-        return new BinaryTreeIterator(this.root);
+        return new BinaryTreeIterator(this.getRoot());
     }
 
     protected Node searchNode(Node root, K key)  {
@@ -208,7 +208,7 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements 
     @Override
     public String toString() {
         StringBuilder treeImagination = new StringBuilder();
-        print(treeImagination, this.root, 0);
+        print(treeImagination, this.getRoot(), 0);
         return treeImagination.toString();
     }
 

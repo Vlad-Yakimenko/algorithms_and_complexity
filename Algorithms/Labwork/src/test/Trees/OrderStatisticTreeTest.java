@@ -1,150 +1,24 @@
 package Trees;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.Random;
 
 import static org.junit.Assert.*;
 
-public class OrderStatisticTreeTest {
+public class OrderStatisticTreeTest extends RedBlackTreeTest {
 
     private OrderStatisticTree<Integer, Integer> testOrderStatisticTree;
-    private RedBlackTreeTestingUtils<Integer, Integer> testingUtils;
-    private static Random random;
 
-    @BeforeClass
-    public static void setUpRedBlackTreeTest() {
-        random = new Random();
+    @Override
+    protected RedBlackTree<Integer, Integer> getRedBlackTree() {
+        return new OrderStatisticTree<>();
     }
 
     @Before
+    @Override
     public void setUp() {
-        testOrderStatisticTree = new OrderStatisticTree<>();
-        testingUtils = new RedBlackTreeTestingUtils<>(testOrderStatisticTree);
-    }
-
-    @Test
-    public void insertTest() {
-        for (int i = 0; i < 1000; i++) {
-            testOrderStatisticTree.insert(random.nextInt(), random.nextInt());
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-        }
-    }
-
-    @Test
-    public void insertGrowingSequenceTest() {
-        for (int i = 0; i < 1000; i++) {
-            testOrderStatisticTree.insert(i, null);
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-        }
-    }
-
-    @Test
-    public void insertFallingSequenceTest() {
-        for (int i = 1000; i >= 0; i--) {
-            testOrderStatisticTree.insert(i, null);
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-        }
-    }
-
-    @Test
-    public void deleteTest() {
-        for (int i = 0; i < 1000; i++) {
-            testOrderStatisticTree.insert(random.nextInt(1000), i);
-        }
-
-        for (int i = 0; i < 500; i++) {
-            Integer key = random.nextInt(1000);
-            Integer valueByKey = testOrderStatisticTree.search(key);
-            Integer buffer = testOrderStatisticTree.delete(key);
-
-            assertEquals(valueByKey, buffer);
-
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-        }
-    }
-
-    @Test
-    public void deleteInGrowingOrderTest() {
-        for (int i = 0; i < 1000; i++) {
-            testOrderStatisticTree.insert(i, null);
-        }
-
-        for (int i = 0; i < 1000; i++) {
-            Integer key = i;
-            Integer valueByKey = testOrderStatisticTree.search(key);
-            Integer buffer = testOrderStatisticTree.delete(key);
-
-            assertEquals(valueByKey, buffer);
-
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-        }
-    }
-
-    @Test
-    public void deleteInFallingOrderTest() {
-        for (int i = 0; i < 1000; i++) {
-            testOrderStatisticTree.insert(i, null);
-        }
-
-        for (int i = 1000; i >= 0; i--) {
-            Integer key = i;
-            Integer valueByKey = testOrderStatisticTree.search(key);
-            Integer buffer = testOrderStatisticTree.delete(key);
-
-            assertEquals(valueByKey, buffer);
-
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-        }
-    }
-
-    @Test
-    public void bigDataTest() {
-        int i;
-
-        for (i = 0; i < 100000; i++) {
-            testOrderStatisticTree.insert(random.nextInt(10000), null);
-        }
-
-        for (int j = i; j >= 0; j--) {
-            Integer key = random.nextInt(10000);
-            Integer valueByKey = testOrderStatisticTree.search(key);
-            Integer buffer = testOrderStatisticTree.delete(key);
-
-            assertEquals(valueByKey, buffer);
-        }
-
-        try {
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
-        } catch (Exception e) {
-            fail(e.toString());
-        }
-    }
-
-    @Test
-    public void searchTest() {
-        int key = random.nextInt(100);
-        int valueBuffer = 0;
-
-        for (int i = 0; i < 100; i++) {
-            int value = random.nextInt();
-            testOrderStatisticTree.insert(i, value);
-
-            if (i == key) {
-                valueBuffer = value;
-            }
-        }
-
-        assertEquals((Integer) valueBuffer, testOrderStatisticTree.search(key));
+        super.setUp();
+        testOrderStatisticTree = (OrderStatisticTree<Integer, Integer>) testRedBlackTree;
     }
 
     @Test
@@ -203,16 +77,7 @@ public class OrderStatisticTreeTest {
     }
 
     @Test
-    public void searchNotExistKey() {
-        for (int i = 0; i < 100; i++) {
-            testOrderStatisticTree.insert(i, random.nextInt());
-        }
-
-        Integer key = 101;
-        assertNull(testOrderStatisticTree.search(key));
-    }
-
-    @Test
+    @Override
     public void toStringTest() {
         OrderStatisticTree<Integer, ?> orderStatisticTree = new OrderStatisticTree<>();
 

@@ -10,9 +10,13 @@ import static org.junit.Assert.*;
 
 public class RedBlackTreeTest {
 
-    private RedBlackTree<Integer, Integer> testRedBlackTree;
-    private RedBlackTreeTestingUtils<Integer, Integer> testingUtils;
-    private static Random random;
+    protected RedBlackTree<Integer, Integer> testRedBlackTree;
+    protected RedBlackTreeTestingUtils<Integer, Integer> testingUtils;
+    protected static Random random;
+
+    protected RedBlackTree<Integer, Integer> getRedBlackTree() {
+        return new RedBlackTree<>();
+    }
 
     @BeforeClass
     public static void setUpRedBlackTreeTest() {
@@ -21,7 +25,7 @@ public class RedBlackTreeTest {
 
     @Before
     public void setUp() {
-        testRedBlackTree = new RedBlackTree<>();
+        testRedBlackTree = getRedBlackTree();
         testingUtils = new RedBlackTreeTestingUtils<>(testRedBlackTree);
     }
 
