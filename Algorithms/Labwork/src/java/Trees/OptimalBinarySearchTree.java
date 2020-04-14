@@ -3,7 +3,7 @@ package Trees;
 import java.util.*;
 import java.util.AbstractMap.SimpleEntry;
 
-public class OptimalBinarySearchTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K, V> {
+public final class OptimalBinarySearchTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K, V> {
 
     private final List<ProbabilitiesHolder<K, V>> staticList = new ArrayList<>();
     private final int[][] optimalTree;
@@ -105,7 +105,7 @@ public class OptimalBinarySearchTree<K extends Comparable<K>, V> extends Abstrac
             SimpleEntry<K, V> data = staticList.get(index).getData();
 
             if (root == null) {
-                this.root = new Node(data.getKey(), data.getValue());
+                this.setRoot(new Node(data.getKey(), data.getValue()));
                 root = this.root;
             }
 

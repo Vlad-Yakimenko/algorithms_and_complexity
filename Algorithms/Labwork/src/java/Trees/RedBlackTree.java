@@ -1,5 +1,7 @@
 package Trees;
 
+import java.util.function.Consumer;
+
 public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K, V> {
 
     protected class RBNode extends Node {
@@ -92,7 +94,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         insertedNode.setParent(previousNode);
 
         if (previousNode == NIL) {
-            this.root = insertedNode;
+            this.setRoot(insertedNode);
         } else if (insertedNode.getKey().compareTo(previousNode.getKey()) < 0) {
             previousNode.setLeft(insertedNode);
         } else {
@@ -106,7 +108,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         insertFixup(insertedNode);
     }
 
-    private void insertFixup(RBNode currentNode) {
+    protected void insertFixup(RBNode currentNode) {
         while (!currentNode.getParent().getColor()) {
             if (currentNode.getParent() == currentNode.getParent().getParent().getLeft()) {
                 RBNode rightUncle = currentNode.getParent().getParent().getRight();
@@ -120,13 +122,14 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         ((RBNode) this.root).setColorBlack();
     }
 
-    protected RBNode fixPropertiesInsert(RBNode currentNode, RBNode uncle, boolean isParentLeftChild) {
-        if (isParentLeftChild) {
+    protected RBNode fixPropertiesInsert(RBNode currentNode, RBNode uncle, boolean isParentsLeftChild) {
+        if (isParentsLeftChild) {
             if (!uncle.getColor()) {
                 currentNode.getParent().setColorBlack();
                 uncle.setColorBlack();
                 currentNode.getParent().getParent().setColorRed();
                 currentNode = currentNode.getParent().getParent();
+
             } else {
                 if (currentNode == currentNode.getParent().getRight()) {
                     currentNode = currentNode.getParent();
@@ -143,6 +146,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
                 uncle.setColorBlack();
                 currentNode.getParent().getParent().setColorRed();
                 currentNode = currentNode.getParent().getParent();
+
             } else {
                 if (currentNode == currentNode.getParent().getLeft()) {
                     currentNode = currentNode.getParent();
@@ -188,12 +192,6 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
                 suspect = (RBNode) treeMinimum(deletedNode.getRight());
                 suspectsOriginalColor = suspect.getColor();
                 suspectsProxy = replaceDeletedNode(deletedNode, suspect);
-
-                if (deletedNode.getColor()) {
-                    suspect.setColorBlack();
-                } else {
-                    suspect.setColorRed();
-                }
             }
 
             if (suspectsOriginalColor) {
@@ -202,7 +200,11 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         }
     }
 
-    protected RBNode replaceDeletedNode(RBNode deletedNode, RBNode suspect) {
+    protected final RBNode replaceDeletedNode(RBNode deletedNode, RBNode suspect) {
+        return replaceDeletedNode(deletedNode, suspect, null);
+    }
+
+    protected RBNode replaceDeletedNode(RBNode deletedNode, RBNode suspect, Consumer<RBNode> processAfterTransplant) {
         RBNode suspectsProxy = suspect.getRight();
 
         if (suspect.getParent() == deletedNode) {
@@ -214,79 +216,42 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         }
 
         transplantRBTree(deletedNode, suspect);
+
+        if (processAfterTransplant != null) {
+            processAfterTransplant.accept(deletedNode);
+        }
+
         suspect.setLeft(deletedNode.getLeft());
         suspect.getLeft().setParent(suspect);
+
+        if (deletedNode.getColor()) {
+            suspect.setColorBlack();
+        } else {
+            suspect.setColorRed();
+        }
 
         return suspectsProxy;
     }
 
     protected void deleteFixup(RBNode currentNode) {
-        RBNode sibling;
-
         while (currentNode != this.root && currentNode.getColor()) {
             if (currentNode == currentNode.getParent().getLeft()) {
-                sibling = currentNode.getParent().getRight();
+                RBNode rightSibling = handleSiblingRed(currentNode, currentNode.getParent().getRight(), true);
 
-                if (!sibling.getColor()) {
-                    sibling.setColorBlack();
-                    currentNode.getParent().setColorRed();
-                    leftRotate(currentNode.getParent());
-                    sibling = currentNode.getParent().getRight();
-                }
-
-                if (sibling.getLeft().getColor() && sibling.getRight().getColor()) {
-                    sibling.setColorRed();
+                if (rightSibling.getLeft().getColor() && rightSibling.getRight().getColor()) {
+                    rightSibling.setColorRed();
                     currentNode = currentNode.getParent();
                 } else {
-                    if (sibling.getRight().getColor()) {
-                        sibling.getLeft().setColorBlack();
-                        sibling.setColorRed();
-                        rightRotate(sibling);
-                        sibling = currentNode.getParent().getRight();
-                    }
-
-                    if (currentNode.getParent().getColor()) {
-                        sibling.setColorBlack();
-                    } else {
-                        sibling.setColorRed();
-                    }
-
-                    currentNode.getParent().setColorBlack();
-                    sibling.getRight().setColorBlack();
-                    leftRotate(currentNode.getParent());
-                    currentNode = (RBNode) this.root;
+                    currentNode = handleSiblingsChildRed(currentNode, rightSibling, true);
                 }
             } else {
-                sibling = currentNode.getParent().getLeft();
+                RBNode leftSibling = handleSiblingRed(currentNode, currentNode.getParent().getLeft(), false);
 
-                if (!sibling.getColor()) {
-                    sibling.setColorBlack();
-                    currentNode.getParent().setColorRed();
-                    rightRotate(currentNode.getParent());
-                    sibling = currentNode.getParent().getLeft();
-                }
-
-                if (sibling.getRight().getColor() && sibling.getLeft().getColor()) {
-                    sibling.setColorRed();
+                if (leftSibling.getRight().getColor() && leftSibling.getLeft().getColor()) {
+                    leftSibling.setColorRed();
                     currentNode = currentNode.getParent();
                 } else {
-                    if (sibling.getLeft().getColor()) {
-                        sibling.getRight().setColorBlack();
-                        sibling.setColorRed();
-                        leftRotate(sibling);
-                        sibling = currentNode.getParent().getLeft();
-                    }
-
-                    if (currentNode.getParent().getColor()) {
-                        sibling.setColorBlack();
-                    } else {
-                        sibling.setColorRed();
-                    }
-
-                    currentNode.getParent().setColorBlack();
-                    sibling.getLeft().setColorBlack();
-                    rightRotate(currentNode.getParent());
-                    currentNode = (RBNode) this.root;
+                    currentNode = handleSiblingsChildRed(currentNode, leftSibling, false);
                 }
             }
         }
@@ -294,9 +259,96 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         currentNode.setColorBlack();
     }
 
+    protected RBNode handleSiblingRed(RBNode currentNode, RBNode sibling, boolean isRightSibling) {
+        if (!sibling.getColor()) {
+            if (isRightSibling) {
+                sibling.setColorBlack();
+                currentNode.getParent().setColorRed();
+                leftRotate(currentNode.getParent());
+                sibling = currentNode.getParent().getRight();
+
+            } else {
+                sibling.setColorBlack();
+                currentNode.getParent().setColorRed();
+                rightRotate(currentNode.getParent());
+                sibling = currentNode.getParent().getLeft();
+            }
+        }
+
+        return sibling;
+    }
+
+    protected final RBNode handleSiblingsChildRed(RBNode currentNode, RBNode sibling, boolean isRightSibling) {
+        return handleSiblingsChildRed(currentNode, sibling, isRightSibling,
+                null, null);
+    }
+
+    protected RBNode handleSiblingsChildRed(RBNode currentNode, RBNode sibling, boolean isSiblingRight,
+                                            Consumer<RBNode> beforeFirstChildChangingColor,
+                                            Consumer<RBNode> beforeSecondChildChangingColor) {
+
+        if (isSiblingRight) {
+            if (sibling.getRight().getColor()) {
+                if (beforeFirstChildChangingColor != null) {
+                    beforeFirstChildChangingColor.accept(sibling);
+                }
+
+                sibling.getLeft().setColorBlack();
+                sibling.setColorRed();
+                rightRotate(sibling);
+                sibling = currentNode.getParent().getRight();
+            }
+
+            if (currentNode.getParent().getColor()) {
+                sibling.setColorBlack();
+            } else {
+                sibling.setColorRed();
+            }
+
+            currentNode.getParent().setColorBlack();
+
+            if (beforeSecondChildChangingColor != null) {
+                beforeSecondChildChangingColor.accept(sibling);
+            }
+
+            sibling.getRight().setColorBlack();
+            leftRotate(currentNode.getParent());
+        } else {
+            if (sibling.getLeft().getColor()) {
+                if (beforeFirstChildChangingColor != null) {
+                    beforeFirstChildChangingColor.accept(sibling);
+                }
+
+                sibling.getRight().setColorBlack();
+                sibling.setColorRed();
+                leftRotate(sibling);
+                sibling = currentNode.getParent().getLeft();
+            }
+
+            if (currentNode.getParent().getColor()) {
+                sibling.setColorBlack();
+            } else {
+                sibling.setColorRed();
+            }
+
+            currentNode.getParent().setColorBlack();
+
+            if (beforeSecondChildChangingColor != null) {
+                beforeSecondChildChangingColor.accept(sibling);
+            }
+
+            sibling.getLeft().setColorBlack();
+            rightRotate(currentNode.getParent());
+        }
+
+        currentNode = (RBNode) this.root;
+
+        return currentNode;
+    }
+
     protected void transplantRBTree(RBNode replacedNode, RBNode proxy) {
         if (replacedNode.getParent() == NIL) {
-            this.root = proxy;
+            this.setRoot(proxy);
         } else if (replacedNode == replacedNode.getParent().getLeft()) {
             replacedNode.getParent().setLeft(proxy);
         } else {

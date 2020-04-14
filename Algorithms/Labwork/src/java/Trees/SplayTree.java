@@ -25,7 +25,7 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K,
         insertElement.setParent(previous);
 
         if (previous == null) {
-            this.root = insertElement;
+            this.setRoot(insertElement);
         } else if (previous.getKey().compareTo(insertElement.getKey()) < 0) {
             previous.setRight(insertElement);
         } else {
