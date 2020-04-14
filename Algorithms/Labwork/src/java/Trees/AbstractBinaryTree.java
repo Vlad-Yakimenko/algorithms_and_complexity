@@ -212,14 +212,14 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements 
         return treeImagination.toString();
     }
 
-    public void print(StringBuilder treeImagination, Node node, int n) {
+    public void print(StringBuilder treeImagination, Node node, int amountOfSpaces) {
         if (node != this.NIL) {
-            print(treeImagination, node.getRight(), n + 10);
+            print(treeImagination, node.getRight(), amountOfSpaces + 10);
 
-            treeImagination.append('\n').append(" ".repeat(Math.max(0, n)));
+            treeImagination.append('\n').append(" ".repeat(Math.max(0, amountOfSpaces)));
             treeImagination.append(node);
 
-            print(treeImagination, node.getLeft(), n + 10);
+            print(treeImagination, node.getLeft(), amountOfSpaces + 10);
         }
     }
 }
