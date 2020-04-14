@@ -259,9 +259,9 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         currentNode.setColorBlack();
     }
 
-    protected RBNode handleSiblingRed(RBNode currentNode, RBNode sibling, boolean isRightSibling) {
+    protected RBNode handleSiblingRed(RBNode currentNode, RBNode sibling, boolean isSiblingRight) {
         if (!sibling.getColor()) {
-            if (isRightSibling) {
+            if (isSiblingRight) {
                 sibling.setColorBlack();
                 currentNode.getParent().setColorRed();
                 leftRotate(currentNode.getParent());
@@ -278,8 +278,8 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
         return sibling;
     }
 
-    protected final RBNode handleSiblingsChildRed(RBNode currentNode, RBNode sibling, boolean isRightSibling) {
-        return handleSiblingsChildRed(currentNode, sibling, isRightSibling,
+    protected final RBNode handleSiblingsChildRed(RBNode currentNode, RBNode sibling, boolean isSiblingRight) {
+        return handleSiblingsChildRed(currentNode, sibling, isSiblingRight,
                 null, null);
     }
 
