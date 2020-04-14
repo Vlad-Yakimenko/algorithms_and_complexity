@@ -29,8 +29,8 @@ public class RedBlackTreeTest {
     public void insertTest() {
         for (int i = 0; i < 1000; i++) {
             testRedBlackTree.insert(random.nextInt(), random.nextInt());
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
         }
     }
 
@@ -38,8 +38,8 @@ public class RedBlackTreeTest {
     public void insertGrowingSequenceTest() {
         for (int i = 0; i < 1000; i++) {
             testRedBlackTree.insert(i, null);
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
         }
     }
 
@@ -47,8 +47,8 @@ public class RedBlackTreeTest {
     public void insertFallingSequenceTest() {
         for (int i = 1000; i >= 0; i--) {
             testRedBlackTree.insert(i, null);
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
         }
     }
 
@@ -65,8 +65,8 @@ public class RedBlackTreeTest {
 
             assertEquals(valueByKey, buffer);
 
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
         }
     }
 
@@ -83,8 +83,8 @@ public class RedBlackTreeTest {
 
             assertEquals(valueByKey, buffer);
 
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
         }
     }
 
@@ -101,8 +101,8 @@ public class RedBlackTreeTest {
 
             assertEquals(valueByKey, buffer);
 
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
         }
     }
 
@@ -123,8 +123,8 @@ public class RedBlackTreeTest {
         }
 
         try {
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testRedBlackTree.getRoot()));
         } catch (Exception e) {
             fail(e.toString());
         }

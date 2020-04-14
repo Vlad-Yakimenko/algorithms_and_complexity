@@ -1,8 +1,12 @@
 package Trees;
 
-public abstract class AbstractBinaryTree<K extends Comparable<K>, V> {
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Iterator;
+import java.util.Stack;
 
-    protected Node root;
+public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements Iterable<SimpleEntry<K, V>> {
+
+    private Node root;
     protected Node NIL;
 
     protected class Node {
@@ -71,6 +75,10 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> {
 
     public abstract V delete(K key);
 
+    public Iterator<SimpleEntry<K, V>> iterator() {
+        return new BinaryTreeIterator(this.root);
+    }
+
     protected Node searchNode(Node root, K key)  {
         Node temp = root;
 
@@ -98,7 +106,7 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> {
         newRoot.setParent(root.getParent());
 
         if (root.getParent() == NIL) {
-            this.root = newRoot;
+            setRoot(newRoot);
         } else if (root == root.getParent().getLeft()) {
             root.getParent().setLeft(newRoot);
         } else {
@@ -120,7 +128,7 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> {
         newRoot.setParent(root.getParent());
 
         if (root.getParent() == NIL) {
-            this.root = newRoot;
+            setRoot(newRoot);
         } else if (root == root.getParent().getRight()) {
             root.getParent().setRight(newRoot);
         } else {
@@ -141,7 +149,7 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> {
 
     protected void transplant(Node replacedNode, Node proxy) {
         if (replacedNode.getParent() == null) {
-            this.root = proxy;
+            setRoot(proxy);
         } else if (replacedNode == replacedNode.getParent().getLeft()) {
             replacedNode.getParent().setLeft(proxy);
         } else {
@@ -150,6 +158,50 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> {
 
         if (proxy != null) {
             proxy.setParent(replacedNode.getParent());
+        }
+    }
+
+    protected Node getRoot() {
+        return this.root;
+    }
+
+    protected void setRoot(Node newRoot) {
+        this.root = newRoot;
+    }
+
+    private class BinaryTreeIterator implements Iterator<SimpleEntry<K, V>> {
+
+        private final Stack<Node> stack;
+
+        public BinaryTreeIterator(Node root) {
+            stack = new Stack<>();
+
+            while (root != NIL) {
+                stack.push(root);
+                root = root.getLeft();
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !stack.isEmpty();
+        }
+
+        @Override
+        public SimpleEntry<K, V> next() {
+            Node temp = stack.pop();
+            SimpleEntry<K, V> buffer = new SimpleEntry<>(temp.getKey(), temp.getValue());
+
+            if (temp.getRight() != NIL) {
+                temp = temp.getRight();
+
+                while (temp != NIL) {
+                    stack.push(temp);
+                    temp = temp.getLeft();
+                }
+            }
+
+            return buffer;
         }
     }
 

@@ -64,12 +64,12 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
 
     public RedBlackTree() {
         this.NIL = new RBNode(null, null);
-        this.root = NIL;
+        super.setRoot(this.NIL);
     }
 
     @Override
     public void insert(K key, V value) {
-        RBNode searchNode = (RBNode) searchNode(this.root, key);
+        RBNode searchNode = (RBNode) searchNode(this.getRoot(), key);
 
         if (searchNode == null) {
             insertRBNode(new RBNode(key, value));
@@ -79,7 +79,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
     }
 
     protected void insertRBNode(RBNode insertedNode) {
-        RBNode currentNode = (RBNode) this.root, previousNode = (RBNode) NIL;
+        RBNode currentNode = (RBNode) this.getRoot(), previousNode = (RBNode) NIL;
 
         while (currentNode != NIL) {
             previousNode = currentNode;
@@ -119,7 +119,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
             }
         }
 
-        ((RBNode) this.root).setColorBlack();
+        ((RBNode) this.getRoot()).setColorBlack();
     }
 
     protected RBNode fixPropertiesInsert(RBNode currentNode, RBNode uncle, boolean isParentsLeftChild) {
@@ -164,7 +164,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
 
     @Override
     public V delete(K key) {
-        RBNode deletedNode = (RBNode) searchNode(this.root, key);
+        RBNode deletedNode = (RBNode) searchNode(this.getRoot(), key);
 
         if (deletedNode != null) {
             deleteRBNode(deletedNode);
@@ -234,7 +234,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
     }
 
     protected void deleteFixup(RBNode currentNode) {
-        while (currentNode != this.root && currentNode.getColor()) {
+        while (currentNode != this.getRoot() && currentNode.getColor()) {
             if (currentNode == currentNode.getParent().getLeft()) {
                 RBNode rightSibling = handleSiblingRed(currentNode, currentNode.getParent().getRight(), true);
 
@@ -341,7 +341,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
             rightRotate(currentNode.getParent());
         }
 
-        currentNode = (RBNode) this.root;
+        currentNode = (RBNode) this.getRoot();
 
         return currentNode;
     }
@@ -361,7 +361,7 @@ public class RedBlackTree<K extends Comparable<K>, V> extends AbstractBinaryTree
     @Override
     public String toString() {
         StringBuilder treeImagination = new StringBuilder();
-        print(treeImagination, this.root, 0);
+        print(treeImagination, this.getRoot(), 0);
         return treeImagination.toString();
     }
 }

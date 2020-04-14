@@ -62,12 +62,12 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     public OrderStatisticTree() {
         this.NIL = null;
         this.NIL = new OSNode(null, null);
-        this.root = NIL;
+        super.setRoot(NIL);
     }
 
     @Override
     public void insert(K key, V value) {
-        OSNode searchNode = (OSNode) searchNode(this.root, key);
+        OSNode searchNode = (OSNode) searchNode(this.getRoot(), key);
 
         if (searchNode == null) {
             OSNode node = new OSNode(key, value);
@@ -81,7 +81,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
     @Override
     public V delete(K key) {
-        OSNode deletedNode = (OSNode) searchNode(this.root, key);
+        OSNode deletedNode = (OSNode) searchNode(this.getRoot(), key);
 
         if (deletedNode != null) {
             decreaseSizes(key);
@@ -138,7 +138,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
             throw new IllegalArgumentException("Illegal rank: " + rank);
         }
 
-        return recursiveSelect((OSNode) this.root, rank);
+        return recursiveSelect((OSNode) this.getRoot(), rank);
     }
 
     private OSNode recursiveSelect(OSNode root, int rank) {
@@ -158,12 +158,12 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     public int getRank(K key) {
-        OSNode node = (OSNode) searchNode(this.root, key);
+        OSNode node = (OSNode) searchNode(this.getRoot(), key);
 
         if (node != null) {
             int rank = node.getLeft().getSize() + 1;
 
-            while (node != this.root) {
+            while (node != this.getRoot()) {
                 if (node == node.getParent().getRight()) {
                     rank += node.getParent().getLeft().getSize() + 1;
                 }
@@ -178,7 +178,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     private void increaseSizes(K key) {
-        OSNode temp = (OSNode) this.root;
+        OSNode temp = (OSNode) this.getRoot();
 
         while (temp != this.NIL) {
             temp.incrementSize();
@@ -187,7 +187,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     }
 
     private void decreaseSizes(K key) {
-        OSNode temp = (OSNode) this.root;
+        OSNode temp = (OSNode) this.getRoot();
 
         while (temp != this.NIL) {
             temp.decrementSize();
@@ -229,7 +229,7 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
     @Override
     public String toString() {
         StringBuilder treeImagination = new StringBuilder();
-        print(treeImagination, this.root, 0);
+        print(treeImagination, this.getRoot(), 0);
         return treeImagination.toString();
     }
 }

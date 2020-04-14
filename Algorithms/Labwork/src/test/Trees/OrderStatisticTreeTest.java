@@ -29,8 +29,8 @@ public class OrderStatisticTreeTest {
     public void insertTest() {
         for (int i = 0; i < 1000; i++) {
             testOrderStatisticTree.insert(random.nextInt(), random.nextInt());
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
         }
     }
 
@@ -38,8 +38,8 @@ public class OrderStatisticTreeTest {
     public void insertGrowingSequenceTest() {
         for (int i = 0; i < 1000; i++) {
             testOrderStatisticTree.insert(i, null);
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
         }
     }
 
@@ -47,8 +47,8 @@ public class OrderStatisticTreeTest {
     public void insertFallingSequenceTest() {
         for (int i = 1000; i >= 0; i--) {
             testOrderStatisticTree.insert(i, null);
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
         }
     }
 
@@ -65,8 +65,8 @@ public class OrderStatisticTreeTest {
 
             assertEquals(valueByKey, buffer);
 
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
         }
     }
 
@@ -83,8 +83,8 @@ public class OrderStatisticTreeTest {
 
             assertEquals(valueByKey, buffer);
 
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
         }
     }
 
@@ -101,8 +101,8 @@ public class OrderStatisticTreeTest {
 
             assertEquals(valueByKey, buffer);
 
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
         }
     }
 
@@ -123,8 +123,8 @@ public class OrderStatisticTreeTest {
         }
 
         try {
-            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
-            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.root));
+            assertTrue(testingUtils.checkTreeProperties((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
+            assertTrue(testingUtils.checkTreeCorrectness((RedBlackTree<Integer, Integer>.RBNode) testOrderStatisticTree.getRoot()));
         } catch (Exception e) {
             fail(e.toString());
         }

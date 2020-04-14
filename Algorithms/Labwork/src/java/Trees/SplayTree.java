@@ -3,13 +3,13 @@ package Trees;
 public class SplayTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K, V> {
 
     public SplayTree() {
-        this.root = null;
+        super.setRoot(null);
         this.NIL = null;
     }
 
     @Override
     public void insert(K key, V value) {
-        Node currentNode = this.root, previous = null;
+        Node currentNode = this.getRoot(), previous = null;
 
         while (currentNode != null) {
             previous = currentNode;
@@ -37,7 +37,7 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K,
 
     @Override
     public V delete(K key) {
-        Node deletedNode = searchNode(this.root, key);
+        Node deletedNode = searchNode(this.getRoot(), key);
 
         if (deletedNode != null) {
             if (deletedNode.getRight() == null)
@@ -67,8 +67,8 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K,
     }
 
     private void splay(Node node) {
-        while (node != this.root) {
-            if (node.getParent() == this.root) {
+        while (node != this.getRoot()) {
+            if (node.getParent() == this.getRoot()) {
                 if (node == node.getParent().getLeft())
                     rightRotate(node.getParent());
                 else if (node == node.getParent().getRight()) {
@@ -106,18 +106,7 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K,
     @Override
     public String toString() {
         StringBuilder treeImagination = new StringBuilder();
-        print(treeImagination, this.root, 0);
+        print(treeImagination, this.getRoot(), 0);
         return treeImagination.toString();
-    }
-
-    public void print(StringBuilder treeImagination, Node node, int n) {
-        if (node != null) {
-            print(treeImagination, node.getRight(), n + 10);
-
-            treeImagination.append('\n').append(" ".repeat(Math.max(0, n)));
-            treeImagination.append(node);
-
-            print(treeImagination, node.getLeft(), n + 10);
-        }
     }
 }

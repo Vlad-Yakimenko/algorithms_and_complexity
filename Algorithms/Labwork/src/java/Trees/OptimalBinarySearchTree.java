@@ -52,7 +52,7 @@ public final class OptimalBinarySearchTree<K extends Comparable<K>, V> extends A
         staticList.sort(ProbabilitiesHolder::compareTo);
 
         this.optimalTree = optimalBST();
-        buildOptimalBST(this.root, 1, optimalTree[1][staticList.size() - 1], staticList.size() - 1);
+        buildOptimalBST(this.getRoot(), 1, optimalTree[1][staticList.size() - 1], staticList.size() - 1);
     }
 
     @Override
@@ -106,7 +106,7 @@ public final class OptimalBinarySearchTree<K extends Comparable<K>, V> extends A
 
             if (root == null) {
                 this.setRoot(new Node(data.getKey(), data.getValue()));
-                root = this.root;
+                root = this.getRoot();
             }
 
             int leftIndex = optimalTree[i][r - 1];

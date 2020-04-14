@@ -29,7 +29,7 @@ public class RedBlackTreeTestingUtils<K extends Comparable<K>, V> {
     private boolean checkNode(RedBlackTree<K, V>.RBNode node) {
         boolean isCorrect = true;
 
-        if (node == tree.root && !node.getColor()) {
+        if (node == tree.getRoot() && !node.getColor()) {
             isCorrect = false;
         }
 
