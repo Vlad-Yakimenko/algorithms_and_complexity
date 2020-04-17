@@ -75,6 +75,10 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements 
 
     public abstract V delete(K key);
 
+    public boolean isEmpty() {
+        return getRoot() == NIL;
+    }
+
     public Iterator<SimpleEntry<K, V>> iterator() {
         return new BinaryTreeIterator(this.getRoot());
     }
@@ -178,6 +182,7 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements 
 
             while (root != NIL) {
                 stack.push(root);
+
                 root = root.getLeft();
             }
         }

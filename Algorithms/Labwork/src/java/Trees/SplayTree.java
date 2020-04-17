@@ -8,6 +8,19 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K,
     }
 
     @Override
+    public V search(K key) {
+        Node searchNode = searchNode(this.getRoot(), key);
+
+        if (searchNode != null) {
+            splay(searchNode);
+            return searchNode.getValue();
+
+        } else {
+            return null;
+        }
+    }
+
+    @Override
     public void insert(K key, V value) {
         Node currentNode = this.getRoot(), previous = null;
 
@@ -101,12 +114,5 @@ public class SplayTree<K extends Comparable<K>, V> extends AbstractBinaryTree<K,
                 }
             }
         }
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder treeImagination = new StringBuilder();
-        print(treeImagination, this.getRoot(), 0);
-        return treeImagination.toString();
     }
 }
