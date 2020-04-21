@@ -1,131 +1,190 @@
 package PerfectHashing;
 
-import Main.Schedule;
+import java.util.*;
+import java.util.AbstractMap.SimpleEntry;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+/**
+ * Key must be unique positive integer.
+*/
+public class PerfectHashMap<K extends Integer, V> {
 
-public class PerfectHashMap {
+    private InnerHashMap<K, V>[] perfectHashMap;
 
-    private SecondHashTable[] perfectHashMap;
-    private List<Schedule> staticList;
-    private int a, b, p, m;
+    private final Set<Pair<K, V>> immutableSet;
+    private final long firstHashingValue, secondHashingValue, primeDivider;
+    private final int hashMapSize;
 
-    public PerfectHashMap(List<Schedule> staticList, String searchKey) {
-        this.staticList = staticList;
+    public static class Pair<K, V> extends SimpleEntry<K, V> {
 
-        searchingP(staticList);
-        this.a = ValuesGenerator.generateA(p);
-        this.b = ValuesGenerator.generateB(p);
+        public Pair(K key, V value) {
+            super(key, value);
+        }
 
-        double squareRootOfN = Math.sqrt(staticList.size());
-        this.m = (int) (squareRootOfN * Math.sqrt(squareRootOfN));
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Map.Entry)) {
+                return false;
+            } else {
+                SimpleEntry<?, ?> e = (SimpleEntry<?, ?>) o;
+                return this.getKey() == null ? e.getKey() == null : this.getKey().equals(e.getKey());
+            }
+        }
 
-        List<List<Schedule>> temp = new ArrayList<>();
-        for (int i = 0; i < m; i++) {
+        @Override
+        public int hashCode() {
+            return this.getKey().hashCode();
+        }
+    }
+
+    private static class InnerHashMap<K extends Integer, V> {
+        private final long firstHashingValue, secondHashingValue;
+        private final int hashMapSize;
+        private final Pair<K, V>[] hashMap;
+
+        @SuppressWarnings("unchecked")
+        public InnerHashMap(long firstHashingValue, long secondHashingValue, int hashMapSize) {
+            this.firstHashingValue = firstHashingValue;
+            this.secondHashingValue = secondHashingValue;
+            this.hashMapSize = hashMapSize;
+            hashMap = new Pair[hashMapSize];
+        }
+
+        public Pair<K, V> get(int index) {
+            return hashMap[index];
+        }
+
+        public void set(int index, Pair<K, V> value) {
+            hashMap[index] = value;
+        }
+
+        public boolean hasIndex(int index) {
+            return hashMap[index] != null;
+        }
+
+        int getHashForKey(K key, long primeDivider) {
+            return ValuesGenerator.generateUniversalHash(key.hashCode(),
+                    firstHashingValue, secondHashingValue, primeDivider, hashMapSize);
+        }
+    }
+
+    public PerfectHashMap(Set<Pair<K, V>> set) {
+        if (set.stream().anyMatch(pair -> pair.getKey().hashCode() < 0)) {
+            throw new IllegalArgumentException("One of keys is negative!");
+        }
+
+        this.immutableSet = set;
+
+        this.primeDivider = searchPrimeDivider();
+        this.firstHashingValue = ValuesGenerator.generateFirstHashingValue(primeDivider);
+        this.secondHashingValue = ValuesGenerator.generateSecondHashingValue(primeDivider);
+
+        this.hashMapSize = (int) Math.pow(immutableSet.size(), 0.8);
+
+        List<List<Pair<K, V>>> temp = new ArrayList<>();
+        for (int i = 0; i < hashMapSize; i++) {
             temp.add(new ArrayList<>());
         }
-        fillingTempHashTable(temp, searchKey);
+        fillTempHashMap(temp);
 
-        creatingSecondFloor(temp, searchKey);
+        createInnerHashMaps(temp);
     }
 
-    private void searchingP(List<Schedule> list) {
-        int maxHash = 0;
+    private long searchPrimeDivider() {
+        int maxHashCode = 0;
 
-        for (Schedule schedule : list) {
-            if (schedule.getDayHash() > maxHash) maxHash = schedule.getDayHash();
+        for (Pair<K, V> pair : immutableSet) {
+            int buffer = pair.getKey().hashCode();
+
+            if (buffer > maxHashCode) maxHashCode = buffer;
         }
 
-        this.p = ValuesGenerator.generateP(maxHash);
+        return ValuesGenerator.generatePrimeNumber(maxHashCode);
     }
 
-    private void fillingTempHashTable(List<List<Schedule>> temp, String searchKey) {
-        for (Schedule schedule : staticList) {
-            int index = ValuesGenerator.generateUniversalHash(schedule.getDayHash(), a, b, p, m);
+    private void fillTempHashMap(List<List<Pair<K, V>>> temp) {
+        for (Pair<K, V> pair : immutableSet) {
+            int index = ValuesGenerator.generateUniversalHash(pair.getKey().hashCode(),
+                    firstHashingValue, secondHashingValue, primeDivider, hashMapSize);
 
-            if (schedule.getDay().equals(searchKey)) {
-                System.out.println("First floor level: " + index);
-            }
-
-            temp.get(index).add(schedule);
+            temp.get(index).add(pair);
         }
     }
 
-    private void creatingSecondFloor(List<List<Schedule>> temp, String searchKey) {
-        perfectHashMap = new SecondHashTable[m];
-        int i = 0;
+    @SuppressWarnings("unchecked")
+    private void createInnerHashMaps(List<List<Pair<K, V>>> temp) {
+        perfectHashMap = new InnerHashMap[hashMapSize];
 
-        for (List<Schedule> chain : temp) {
+        int index = 0;
+        for (List<Pair<K, V>> chain : temp) {
             if (chain.size() > 0) {
-                createSubHashMap(chain, i, searchKey);
+                createInnerHashMap(chain, index);
             } else {
-                perfectHashMap[i] = null;
+                perfectHashMap[index] = null;
             }
 
-            i++;
+            index++;
         }
     }
 
-    private void createSubHashMap(List<Schedule> chain, int i, String searchKey) {
-        int subLevelSize = chain.size() * chain.size();
+    private void createInnerHashMap(List<Pair<K, V>> chain, int index) {
+        int innerHashMapSize = (int) Math.pow(chain.size(), 2);
         boolean isCollision;
 
         do {
-            int subLevelA = ValuesGenerator.generateA(p);
-            int subLevelB = ValuesGenerator.generateB(p);
+            long innerFirstHashingValue = ValuesGenerator.generateFirstHashingValue(primeDivider);
+            long innerSecondHashingValue = ValuesGenerator.generateSecondHashingValue(primeDivider);
 
-            perfectHashMap[i] = new SecondHashTable(subLevelA, subLevelB, subLevelSize);
+            perfectHashMap[index] = new InnerHashMap<>(
+                    innerFirstHashingValue, innerSecondHashingValue, innerHashMapSize);
             isCollision = false;
 
-            for (Schedule schedule : chain) {
-                int index = ValuesGenerator.generateUniversalHash(schedule.getDayHash(), subLevelA, subLevelB, p, subLevelSize);
+            for (Pair<K, V> pair : chain) {
+                int innerIndex = ValuesGenerator.generateUniversalHash(pair.getKey().hashCode(),
+                        innerFirstHashingValue, innerSecondHashingValue, primeDivider, innerHashMapSize);
 
-                if (schedule.getDay().equals(searchKey)) {
-                    System.out.println("Second floor index: " + (index + 3));
-                }
-
-                if (perfectHashMap[i].isSomethingByIndex(index)) {
+                if (perfectHashMap[index].hasIndex(innerIndex)) {
                     isCollision = true;
                     break;
                 } else {
-                    perfectHashMap[i].setByIndex(index, schedule);
+                    perfectHashMap[index].set(innerIndex, pair);
                 }
             }
         } while (isCollision);
     }
 
-    public void getHashTableSize() {
-        System.out.println("java.Main.Main HashMap size: " + perfectHashMap.length);
+    public V get(K key) {
+        int rowIndex = ValuesGenerator.generateUniversalHash(key.hashCode(),
+                firstHashingValue, secondHashingValue, primeDivider, hashMapSize);
+
+        int columnIndex = perfectHashMap[rowIndex].getHashForKey(key, primeDivider);
+
+        Pair<K, V> searchPair = perfectHashMap[rowIndex].get(columnIndex);
+
+        if (searchPair != null && searchPair.getKey().equals(key)) {
+            return searchPair.getValue();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder hashMap = new StringBuilder("HashMap\n***\n");
 
         int i = 0;
-        for (SecondHashTable secondHashTable : perfectHashMap) {
-            if (secondHashTable != null) {
-                System.out.println(i + " chain size: " + secondHashTable.getM());
+        for (InnerHashMap<K, V> innerHashMap : this.perfectHashMap) {
+            hashMap.append("Inner HashMap by index ").append(i).append(" : ");
+
+            if (innerHashMap != null) {
+                hashMap.append(Arrays.deepToString(innerHashMap.hashMap)).append('\n');
             } else {
-                System.out.println(i + " chain size: 0");
+                hashMap.append("null").append('\n');
             }
 
             i++;
         }
-    }
+        hashMap.append("***").append('\n');
 
-    public void printHashTable() {
-        System.out.println(Arrays.deepToString(perfectHashMap));
-    }
-
-    public Schedule get(String key) {
-        int rowIndex = ValuesGenerator.generateUniversalHash(Math.abs(key.hashCode()), a, b, p, m);
-
-        int subLevelSize = perfectHashMap[rowIndex].getM();
-        int subLevelA = perfectHashMap[rowIndex].getA();
-        int subLevelB = perfectHashMap[rowIndex].getB();
-        int columnIndex = ValuesGenerator.generateUniversalHash(Math.abs(key.hashCode()), subLevelA, subLevelB, p, subLevelSize);
-
-        System.out.println("Row index: " + rowIndex);
-        System.out.println("Column index: " + (columnIndex + 3));
-
-        return perfectHashMap[rowIndex].get(columnIndex);
+        return hashMap.toString();
     }
 }

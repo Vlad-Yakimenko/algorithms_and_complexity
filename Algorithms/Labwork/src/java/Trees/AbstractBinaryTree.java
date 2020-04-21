@@ -75,8 +75,20 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements 
 
     public abstract V delete(K key);
 
+    public int size() {
+        return size(getRoot());
+    }
+
+    private int size(Node node) {
+        if (node == NIL) {
+            return 0;
+        } else {
+            return size(node.getLeft()) + size(node.getRight()) + 1;
+        }
+    }
+
     public boolean isEmpty() {
-        return getRoot() == NIL;
+        return size() == 0;
     }
 
     public Iterator<SimpleEntry<K, V>> iterator() {

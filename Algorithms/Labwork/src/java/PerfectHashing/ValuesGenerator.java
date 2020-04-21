@@ -1,43 +1,50 @@
 package PerfectHashing;
 
 import java.util.Random;
+import java.util.stream.LongStream;
 
 public class ValuesGenerator {
 
-    private static Random random = new Random();
+    private static final Random random = new Random();
+    public static final long FIRST_PRIME_AFTER_INTEGER = Long.parseLong("2147483659");
 
-    public static int generateP(int maxHash) {
-        int p = random.nextInt();
+    public static long generatePrimeNumber(int lowerBound) {
+        long temp = lowerBound + 1;
 
-        while (!isPrime(p) && p < maxHash) {
-            p = random.nextInt();
+        while (temp < FIRST_PRIME_AFTER_INTEGER && !isPrime(temp)) {
+            ++temp;
         }
 
-        return p;
+        return temp;
     }
 
-    public static int generateA(int p) {
-        return random.nextInt(p - 1) + 1;
-    }
+    public static long generateFirstHashingValue(long bound) {
+        long temp = random.nextLong();
 
-    public static int generateB(int p) {
-        return random.nextInt(p - 1);
-    }
-
-    public static int generateUniversalHash(int key, int a, int b, int p, int m) {
-        return Math.abs(((a * key + b) % p) % m);
-    }
-
-    private static boolean isPrime(int inputNum){
-        if (inputNum <= 3 || inputNum % 2 == 0) {
-            return inputNum == 2 || inputNum == 3;
+        while (temp >= bound || temp < 1) {
+            temp = Math.abs(random.nextLong()) % bound;
         }
 
-        int divisor = 3;
-        while ((divisor <= Math.sqrt(inputNum)) && (inputNum % divisor != 0)) {
-            divisor += 2;
+        return temp;
+    }
+
+    public static long generateSecondHashingValue(long bound) {
+        long temp = random.nextLong();
+
+        while (temp >= bound || temp < 0) {
+            temp = Math.abs(random.nextLong()) % bound;
         }
 
-        return inputNum % divisor != 0;
+        return temp;
+    }
+
+    public static int generateUniversalHash(int key, long firstHashingValue, long secondHashingValue,
+                                            long primeDivider, int hashMapSize) {
+
+        return (int) ((firstHashingValue * key + secondHashingValue) % primeDivider) % hashMapSize;
+    }
+
+    public static boolean isPrime(long number){
+        return number > 1 && LongStream.range(2, (long) Math.sqrt(number)).noneMatch(i -> number % i == 0);
     }
 }
