@@ -1,21 +1,23 @@
 package Heaps;
 
-public class CircularDoublyLinkedList<T> {
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+public class CircularDoublyLinkedList<T> implements Iterable<T> {
+
     private ListNode start, end;
     private int size;
 
-    class ListNode {
-        private T data;
+    private class ListNode {
+        T data;
         private ListNode next, previous;
 
-        public ListNode() {
-            this.data = null;
-            this.next = null;
-            this.previous = null;
+        public ListNode(T data) {
+            this(data, null, null);
         }
 
-        public ListNode(T value, ListNode next, ListNode previous) {
-            this.data = value;
+        public ListNode(T data, ListNode next, ListNode previous) {
+            this.data = data;
             this.next = next;
             this.previous = previous;
         }
@@ -24,19 +26,19 @@ public class CircularDoublyLinkedList<T> {
             return data;
         }
 
-        public ListNode getLinkNext() {
+        public ListNode getNext() {
             return next;
         }
 
-        public void setLinkNext(ListNode next) {
+        public void setNext(ListNode next) {
             this.next = next;
         }
 
-        public ListNode getLinkPrev() {
+        public ListNode getPrevious() {
             return previous;
         }
 
-        public void setLinkPrev(ListNode previous) {
+        public void setPrevious(ListNode previous) {
             this.previous = previous;
         }
     }
@@ -46,56 +48,92 @@ public class CircularDoublyLinkedList<T> {
         size = 0;
     }
 
-    public boolean isEmpty() {
-        return start == null;
-    }
-
-    public int getSize() {
-        return size;
-    }
-
     public void add(T value) {
-        ListNode listNode = new ListNode(value, null, null);
+        ListNode listNode = new ListNode(value);
 
-        if (start == null) {
-            listNode.setLinkNext(listNode);
-            listNode.setLinkPrev(listNode);
-            start = listNode;
+        ListNode startOriginValue = start;
+        insertNode(listNode);
+
+        if (startOriginValue == null) {
             end = start;
         } else {
-            listNode.setLinkPrev(end);
-            end.setLinkNext(listNode);
-            start.setLinkPrev(listNode);
-            listNode.setLinkNext(start);
             end = listNode;
         }
+    }
+
+    public void insertAtStart(T value) {
+        ListNode listNode = new ListNode(value);
+
+        ListNode startOriginValue = start;
+        insertNode(listNode);
+
+        if (startOriginValue == null) {
+            end = start;
+        } else {
+            start = listNode;
+        }
+    }
+
+    private void insertNode(ListNode value) {
+        if (start == null) {
+            value.setNext(value);
+            value.setPrevious(value);
+            start = value;
+        } else {
+            value.setPrevious(end);
+            end.setNext(value);
+            start.setPrevious(value);
+            value.setNext(start);
+        }
+
         size++;
     }
 
     public T get(int index) {
-        this.checkElementIndex(index);
         return this.getNode(index).data;
     }
 
-    public int indexOf(Object o) {
-        int index = 0;
-        ListNode x;
+    ListNode getNode(int index) {
+        this.checkElementIndex(index);
 
-        if (o == null) {
-            for(x = this.start; x != null; x = x.next) {
-                if (x.data == null) {
-                    return index;
-                }
+        ListNode temp;
+        int i;
 
-                ++index;
+        if (index < this.size >> 1) {
+            temp = this.start;
+
+            for(i = 0; i < index; i++) {
+                temp = temp.next;
             }
         } else {
-            for(x = this.start; x != null; x = x.next) {
-                if (o.equals(x.data)) {
+            temp = this.end;
+
+            for(i = this.size - 1; i > index; i--) {
+                temp = temp.previous;
+            }
+        }
+
+        return temp;
+    }
+
+    public int indexOf(T value) {
+        int index = 0;
+
+        if (value == null) {
+            for (T buffer : this) {
+                if (buffer == null) {
                     return index;
                 }
 
-                ++index;
+                index++;
+            }
+        } else {
+            for (T buffer : this) {
+                if (value.equals(buffer)) {
+                    return index;
+                }
+
+                index++;
             }
         }
 
@@ -103,6 +141,8 @@ public class CircularDoublyLinkedList<T> {
     }
 
     public void delete(int index) {
+        this.checkElementIndex(index);
+
         if (index == 0) {
             if (size == 1) {
                 start = null;
@@ -111,66 +151,115 @@ public class CircularDoublyLinkedList<T> {
                 return;
             }
 
-            start = start.getLinkNext();
-            start.setLinkPrev(end);
-            end.setLinkNext(start);
+            start = start.getNext();
+            start.setPrevious(end);
+            end.setNext(start);
             size--;
             return;
         }
 
         if (index == size - 1) {
-            end = end.getLinkPrev();
-            end.setLinkNext(start);
-            start.setLinkPrev(end);
+            end = end.getPrevious();
+            end.setNext(start);
+            start.setPrevious(end);
             size--;
         }
 
-        ListNode temp = start.getLinkNext();
-        for (int i = 1; i < size; i++) {
+        ListNode temp = nextNode(start);
+        int i = 1;
+        while (temp != null) {
             if (i == index) {
-                ListNode previous = temp.getLinkPrev();
-                ListNode next = temp.getLinkNext();
+                ListNode previous = temp.previous;
+                ListNode next = temp.next;
 
-                previous.setLinkNext(next);
-                next.setLinkPrev(previous);
+                previous.setNext(next);
+                next.setPrevious(previous);
                 size--;
                 return;
             }
 
-            temp = temp.getLinkNext();
+            i++;
+            temp = nextNode(temp);
         }
     }
 
-    ListNode next(ListNode listNode) {
-        return listNode.getLinkNext();
+    public int getSize() {
+        return size;
     }
 
-    ListNode getNode(int index) {
-        ListNode x;
-        int i;
-        if (index < this.size >> 1) {
-            x = this.start;
-
-            for(i = 0; i < index; ++i) {
-                x = x.next;
-            }
-        } else {
-            x = this.end;
-
-            for(i = this.size - 1; i > index; --i) {
-                x = x.previous;
-            }
-        }
-        return x;
-    }
-
-    private boolean isElementIndex(int index) {
-        return index >= 0 && index < this.size;
+    public boolean isEmpty() {
+        return start == null;
     }
 
     private void checkElementIndex(int index) {
-        if (!this.isElementIndex(index)) {
-            throw new IndexOutOfBoundsException("Incorrect index!");
+        if (!(index >= 0 && index < this.size)) {
+            throw new IndexOutOfBoundsException(
+                    String.format("Index %d out of bounds for length %d", index, this.size));
         }
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new CircularListIterator();
+    }
+
+    private class CircularListIterator implements Iterator<T> {
+
+        private ListNode cursor;
+        private boolean isMoved;
+
+        public CircularListIterator() {
+            this.cursor = start;
+            this.isMoved = false;
+        }
+
+        @Override
+        public boolean hasNext() {
+            if (isMoved) {
+                return cursor.next != start;
+            } else {
+                return size != 0;
+            }
+        }
+
+        @Override
+        public T next() {
+            if (hasNext() && !isMoved) {
+                isMoved = true;
+                return cursor.getData();
+            } else if (hasNext()) {
+                cursor = cursor.next;
+                return cursor.getData();
+            } else {
+                throw new NoSuchElementException();
+            }
+        }
+    }
+
+    private ListNode nextNode(ListNode currentNode) {
+        if (currentNode.getNext() == start){
+            return null;
+        } else {
+            return currentNode.getNext();
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder list = new StringBuilder();
+
+        list.append('[');
+
+        for (T buffer : this) {
+            list.append(buffer).append(',').append(' ');
+        }
+
+        if (list.length() > 1) {
+            list.delete(list.length() - 2, list.length());
+        }
+
+        list.append(']');
+
+        return list.toString();
     }
 }
