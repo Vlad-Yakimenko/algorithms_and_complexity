@@ -2,6 +2,7 @@ package Trees;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 
 public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements Iterable<SimpleEntry<K, V>> {
@@ -194,7 +195,6 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements 
 
             while (root != NIL) {
                 stack.push(root);
-
                 root = root.getLeft();
             }
         }
@@ -206,19 +206,22 @@ public abstract class AbstractBinaryTree<K extends Comparable<K>, V> implements 
 
         @Override
         public SimpleEntry<K, V> next() {
-            Node temp = stack.pop();
-            SimpleEntry<K, V> buffer = new SimpleEntry<>(temp.getKey(), temp.getValue());
+            if (hasNext()) {
+                Node temp = stack.pop();
+                SimpleEntry<K, V> buffer = new SimpleEntry<>(temp.getKey(), temp.getValue());
 
-            if (temp.getRight() != NIL) {
-                temp = temp.getRight();
-
-                while (temp != NIL) {
-                    stack.push(temp);
-                    temp = temp.getLeft();
+                if (temp.getRight() != NIL) {
+                    temp = temp.getRight();
+                    while (temp != NIL) {
+                        stack.push(temp);
+                        temp = temp.getLeft();
+                    }
                 }
-            }
+                return buffer;
 
-            return buffer;
+            } else {
+                throw new NoSuchElementException();
+            }
         }
     }
 
