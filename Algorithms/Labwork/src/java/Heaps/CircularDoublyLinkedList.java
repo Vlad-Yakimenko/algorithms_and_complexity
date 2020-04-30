@@ -140,6 +140,30 @@ public class CircularDoublyLinkedList<T> implements Iterable<T> {
         return -1;
     }
 
+    public int indexOfByAddress(T value) {
+        int index = 0;
+
+        if (value == null) {
+            for (T buffer : this) {
+                if (buffer == null) {
+                    return index;
+                }
+
+                index++;
+            }
+        } else {
+            for (T buffer : this) {
+                if (value == buffer) {
+                    return index;
+                }
+
+                index++;
+            }
+        }
+
+        return -1;
+    }
+
     public void delete(int index) {
         this.checkElementIndex(index);
 
@@ -156,13 +180,13 @@ public class CircularDoublyLinkedList<T> implements Iterable<T> {
             end.setNext(start);
             size--;
             return;
-        }
 
-        if (index == size - 1) {
+        } else if (index == size - 1) {
             end = end.getPrevious();
             end.setNext(start);
             start.setPrevious(end);
             size--;
+            return;
         }
 
         ListNode temp = nextNode(start);
@@ -188,7 +212,7 @@ public class CircularDoublyLinkedList<T> implements Iterable<T> {
     }
 
     public boolean isEmpty() {
-        return start == null;
+        return size == 0;
     }
 
     private void checkElementIndex(int index) {
@@ -203,6 +227,10 @@ public class CircularDoublyLinkedList<T> implements Iterable<T> {
         return new CircularListIterator();
     }
 
+    public Iterator<T> iterator(T from) {
+        return new CircularListIterator(from);
+    }
+
     private class CircularListIterator implements Iterator<T> {
 
         private ListNode cursor;
@@ -210,6 +238,18 @@ public class CircularDoublyLinkedList<T> implements Iterable<T> {
 
         public CircularListIterator() {
             this.cursor = start;
+            this.isMoved = false;
+        }
+
+        public CircularListIterator(T current) {
+            int indexOf = indexOf(current);
+
+            if (indexOf != -1) {
+                this.cursor = getNode(indexOf);
+            } else {
+                this.cursor = start;
+            }
+
             this.isMoved = false;
         }
 

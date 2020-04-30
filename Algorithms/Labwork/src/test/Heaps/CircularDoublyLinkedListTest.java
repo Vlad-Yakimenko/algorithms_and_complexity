@@ -101,6 +101,31 @@ public class CircularDoublyLinkedListTest {
     }
 
     @Test
+    public void indexOfByAddressTest() {
+        class Test {
+            public final int field;
+
+            public Test(int field) {
+                this.field = field;
+            }
+        }
+
+        CircularDoublyLinkedList<Test> list = new CircularDoublyLinkedList<>();
+
+        Test buffer1 = new Test(-1);
+        Test buffer2 = new Test(-1);
+
+        list.add(buffer1);
+        for (int i = 0; i < 10; i++) {
+            list.add(new Test(i));
+        }
+        list.add(buffer2);
+
+        assertEquals(0, list.indexOf(buffer1));
+        assertEquals(11, list.indexOf(buffer2));
+    }
+
+    @Test
     public void indexOfNullTest() {
         for (int i = 0; i < 10; i++) {
             testList.add(i);
