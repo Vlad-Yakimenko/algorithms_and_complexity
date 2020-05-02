@@ -1,5 +1,7 @@
 package Trees;
 
+import java.util.AbstractMap.SimpleEntry;
+
 public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree<K, V> {
 
     class OSNode extends RBNode {
@@ -133,12 +135,18 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
         }
     }
 
-    public OSNode selectOST(int rank) {
+    public SimpleEntry<K, V> selectOST(int rank) {
         if (rank < 1) {
             throw new IllegalArgumentException("Illegal rank: " + rank);
         }
 
-        return recursiveSelect((OSNode) this.getRoot(), rank);
+        OSNode node = recursiveSelect((OSNode) this.getRoot(), rank);
+
+        if (node != null) {
+            return new SimpleEntry<>(node.getKey(), node.getValue());
+        } else {
+            return null;
+        }
     }
 
     private OSNode recursiveSelect(OSNode root, int rank) {
@@ -191,7 +199,9 @@ public class OrderStatisticTree<K extends Comparable<K>, V> extends RedBlackTree
 
         while (temp != this.NIL) {
             temp.decrementSize();
+
             if (temp.getKey().equals(key)) break;
+
             temp = temp.getKey().compareTo(key) <= 0 ? temp.getRight() : temp.getLeft();
         }
     }
