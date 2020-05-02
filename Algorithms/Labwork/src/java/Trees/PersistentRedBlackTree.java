@@ -81,6 +81,7 @@ public class PersistentRedBlackTree<K extends Comparable<K>, V> extends RedBlack
         insertFixup(insertedNode);
     }
 
+    @Override
     protected void insertFixup(RBNode currentNode) {
         while (!currentNode.getParent().getColor()) {
             if (currentNode.getParent() == currentNode.getParent().getParent().getLeft()) {
@@ -120,6 +121,7 @@ public class PersistentRedBlackTree<K extends Comparable<K>, V> extends RedBlack
         }
     }
 
+    @Override
     protected void deleteRBNode(RBNode deletedNode) {
         RBNode suspect, suspectsProxy;
         boolean suspectsOriginalColor;
@@ -169,6 +171,7 @@ public class PersistentRedBlackTree<K extends Comparable<K>, V> extends RedBlack
         }
     }
 
+    @Override
     protected void deleteFixup(RBNode currentNode) {
         while (currentNode != getRoot() && currentNode.getColor()) {
             if (currentNode == currentNode.getParent().getLeft()) {
@@ -211,6 +214,7 @@ public class PersistentRedBlackTree<K extends Comparable<K>, V> extends RedBlack
         currentNode.setColorBlack();
     }
 
+    @Override
     protected Node treeMinimum(Node root) {
         while (root.getLeft() != NIL) {
             RBNode left = deepCopy((RBNode) root.getLeft());
